@@ -22,7 +22,7 @@ app.use(function(req, res, next) {
 var server = app.listen(PORT, function () {
     var host = server.address().address;
     var port = server.address().port;
-    console.log('Server start at http://%s:%s', '0.0.0.0', PORT);
+    console.log('Server start at http://%s:%s', 'dev.calculate', PORT);
 });
 
 // parse application/x-www-form-urlencoded
