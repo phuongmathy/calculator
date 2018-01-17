@@ -1,0 +1,66 @@
+
+.btn {
+    width:50px;
+    height:50px;
+    margin-left:5px;
+    border-radius:4px;
+}
+
+.btn-clear {
+    background:#24b4de;
+    border-bottom:3px solid #399cb9;
+    width: 160px;
+}
+
+.btn-number {
+    background: #eee;
+    color: #000;
+    font-size: 26px;
+    cursor: pointer;
+    outline: none;
+    border-bottom: 3px solid #eee;
+}
+
+.btn-number:active {
+    background:#333;
+    color: #fff;
+    box-shadow: inset 4px 4px 4px #333;
+    border-bottom: 3px solid #333;
+}
+
+.btn-zero {
+    width:105px;
+    height:50px;
+    border-radius:4px;
+}
+
+.btn-operator {
+    background:#ccc;
+    color:#000;
+    font-size:26px;
+    cursor: pointer;
+    outline:none;
+    border-bottom:3px solid #ccc;
+}
+
+.btn-equal {
+    background:#17a928;
+    border-bottom:3px solid #1f7a29;
+}
+
+.btn-result {
+    overflow: hidden;
+    width: 195px;
+    position: relative;
+    top: 15px;
+    font-size: 33px;
+    height: auto;
+    margin: 10px 0px 30px 5px;
+    padding: 10px;
+    text-align: right;
+    letter-spacing: 2px;
+}
+
+.btn-result:hover {
+    font-size: 33px;
+}

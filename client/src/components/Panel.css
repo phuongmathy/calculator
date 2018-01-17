@@ -1,0 +1,12 @@
+.rows {
+    width:280px;
+    margin:10px 20px;
+}
+
+.main {
+    width:265px;
+    height:400px;
+    background:#fff;
+    margin:50px auto;
+    transition: all 2s ease;
+}
