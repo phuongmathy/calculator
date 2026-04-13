@@ -8,412 +8,339 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --brand: #1a56db;
-      --brand-light: #ebf0ff;
-      --brand-hover: #1648c0;
-      --success: #0e9f6e;
-      --success-light: #e3faf3;
-      --warning: #c27803;
-      --warning-light: #fff3cd;
-      --danger: #e02424;
-      --danger-light: #fde8e8;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --gray-900: #111827;
+      --brand: #1a56db; --brand-light: #ebf0ff; --brand-hover: #1648c0;
+      --success: #0e9f6e; --success-light: #e3faf3;
+      --warning: #c27803; --warning-light: #fff3cd;
+      --danger: #e02424; --danger-light: #fde8e8;
+      --purple: #7c3aed; --purple-light: #ede9fe;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280;
+      --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937; --gray-900: #111827;
       --radius: 8px;
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
       --shadow-lg: 0 8px 24px rgba(0,0,0,0.14);
     }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--gray-100);
-      color: var(--gray-800);
-      font-size: 14px;
-      line-height: 1.5;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); color: var(--gray-800); font-size: 14px; line-height: 1.5; }
 
-    /* ── Top nav ── */
-    .topnav {
-      background: #fff;
-      border-bottom: 1px solid var(--gray-200);
-      padding: 0 24px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .topnav .logo { font-weight: 700; font-size: 16px; color: var(--brand); letter-spacing: -0.3px; }
-    .topnav .sep { color: var(--gray-300); font-size: 18px; }
-    .topnav .breadcrumb { color: var(--gray-500); font-size: 13px; }
-    .topnav .breadcrumb span { color: var(--gray-800); font-weight: 500; }
+    /* nav */
+    .topnav { background:#fff; border-bottom:1px solid var(--gray-200); padding:0 24px; height:52px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:100; }
+    .topnav .logo { font-weight:700; font-size:16px; color:var(--brand); }
+    .topnav .sep { color:var(--gray-300); font-size:18px; }
+    .topnav .breadcrumb { color:var(--gray-500); font-size:13px; }
+    .topnav .breadcrumb span { color:var(--gray-800); font-weight:500; }
 
-    /* ── Layout ── */
-    .layout { display: flex; min-height: calc(100vh - 52px); }
+    /* layout */
+    .layout { display:flex; min-height:calc(100vh - 52px); }
+    .sidebar { width:220px; background:#fff; border-right:1px solid var(--gray-200); padding:20px 0; flex-shrink:0; }
+    .sidebar-section { padding:0 16px 8px; font-size:11px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:.6px; margin-top:16px; }
+    .sidebar-item { display:flex; align-items:center; gap:10px; padding:8px 16px; cursor:pointer; color:var(--gray-600); font-size:13.5px; transition:background .15s; }
+    .sidebar-item:hover { background:var(--gray-50); }
+    .sidebar-item.active { background:var(--brand-light); color:var(--brand); font-weight:500; border-right:3px solid var(--brand); }
+    .sidebar-icon { font-size:16px; width:18px; text-align:center; }
+    .main { flex:1; padding:28px 32px; max-width:980px; }
 
-    .sidebar {
-      width: 220px;
-      background: #fff;
-      border-right: 1px solid var(--gray-200);
-      padding: 20px 0;
-      flex-shrink: 0;
-    }
-    .sidebar-section { padding: 0 16px 8px; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 16px; }
-    .sidebar-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 16px; cursor: pointer; border-radius: 0;
-      color: var(--gray-600); font-size: 13.5px; transition: background 0.15s;
-    }
-    .sidebar-item:hover { background: var(--gray-50); }
-    .sidebar-item.active { background: var(--brand-light); color: var(--brand); font-weight: 500; border-right: 3px solid var(--brand); }
-    .sidebar-icon { font-size: 16px; width: 18px; text-align: center; }
+    /* page header */
+    .page-header { margin-bottom:24px; }
+    .page-header h1 { font-size:20px; font-weight:700; color:var(--gray-900); }
+    .page-header p { color:var(--gray-500); font-size:13.5px; margin-top:4px; }
 
-    .main { flex: 1; padding: 28px 32px; max-width: 900px; }
+    /* steps */
+    .steps { display:flex; align-items:center; margin-bottom:28px; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); padding:16px 24px; }
+    .step { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .step-num { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; background:var(--gray-200); color:var(--gray-500); transition:all .2s; }
+    .step.active .step-num { background:var(--brand); color:#fff; }
+    .step.done .step-num { background:var(--success); color:#fff; }
+    .step-label { font-size:13px; color:var(--gray-500); }
+    .step.active .step-label { color:var(--gray-800); font-weight:600; }
+    .step.done .step-label { color:var(--success); }
+    .step-divider { flex:1; height:1px; background:var(--gray-200); margin:0 12px; min-width:24px; }
 
-    /* ── Page header ── */
-    .page-header { margin-bottom: 24px; }
-    .page-header h1 { font-size: 20px; font-weight: 700; color: var(--gray-900); }
-    .page-header p { color: var(--gray-500); font-size: 13.5px; margin-top: 4px; }
+    /* cards */
+    .card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); padding:24px; margin-bottom:16px; box-shadow:var(--shadow-sm); }
+    .card-title { font-size:15px; font-weight:700; color:var(--gray-900); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+    .card-subtitle { font-size:13px; color:var(--gray-500); margin-bottom:20px; }
+    .card-divider { border:none; border-top:1px solid var(--gray-100); margin:18px 0; }
 
-    /* ── Step indicator ── */
-    .steps {
-      display: flex; align-items: center; gap: 0;
-      margin-bottom: 28px; background: #fff;
-      border: 1px solid var(--gray-200); border-radius: var(--radius);
-      padding: 16px 24px; overflow-x: auto;
-    }
-    .step { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .step-num {
-      width: 26px; height: 26px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600;
-      background: var(--gray-200); color: var(--gray-500);
-      transition: all 0.2s;
-    }
-    .step.active .step-num { background: var(--brand); color: #fff; }
-    .step.done .step-num { background: var(--success); color: #fff; }
-    .step-label { font-size: 13px; color: var(--gray-500); font-weight: 400; }
-    .step.active .step-label { color: var(--gray-800); font-weight: 600; }
-    .step.done .step-label { color: var(--success); }
-    .step-divider { flex: 1; height: 1px; background: var(--gray-200); margin: 0 12px; min-width: 24px; }
+    /* forms */
+    .form-row { display:flex; gap:16px; margin-bottom:16px; }
+    .form-row.triple > * { flex:1; }
+    .form-group { display:flex; flex-direction:column; gap:6px; flex:1; }
+    .form-group.half { flex:0 0 calc(50% - 8px); }
+    label { font-size:13px; font-weight:500; color:var(--gray-700); }
+    label .req { color:var(--danger); margin-left:2px; }
+    label .hint { font-weight:400; color:var(--gray-400); font-size:12px; margin-left:4px; }
+    input[type="text"], select, textarea { border:1px solid var(--gray-300); border-radius:6px; padding:8px 12px; font-size:13.5px; color:var(--gray-800); background:#fff; outline:none; width:100%; transition:border-color .15s, box-shadow .15s; font-family:inherit; }
+    input[type="text"]:focus, select:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(26,86,219,.12); }
+    select { cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:32px; }
+    .toggle-group { display:flex; border:1px solid var(--gray-300); border-radius:6px; overflow:hidden; }
+    .toggle-btn { flex:1; padding:8px 12px; font-size:13px; font-weight:500; border:none; background:#fff; color:var(--gray-600); cursor:pointer; transition:all .15s; border-right:1px solid var(--gray-300); font-family:inherit; }
+    .toggle-btn:last-child { border-right:none; }
+    .toggle-btn.active { background:var(--brand); color:#fff; }
+    .toggle-btn:hover:not(.active) { background:var(--gray-50); }
 
-    /* ── Cards ── */
-    .card {
-      background: #fff; border: 1px solid var(--gray-200);
-      border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-    .card-title {
-      font-size: 15px; font-weight: 700; color: var(--gray-900);
-      margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
-    }
-    .card-subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
-    .card-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+    /* checkboxes */
+    .check-group { display:flex; flex-wrap:wrap; gap:8px; }
+    .check-item { display:flex; align-items:center; gap:7px; padding:7px 12px; border:1.5px solid var(--gray-200); border-radius:6px; cursor:pointer; font-size:13px; color:var(--gray-700); background:#fff; transition:all .15s; user-select:none; }
+    .check-item:hover { border-color:var(--brand); background:var(--brand-light); }
+    .check-item.checked { border-color:var(--brand); background:var(--brand-light); color:var(--brand); font-weight:500; }
+    .check-item input[type="checkbox"] { display:none; }
+    .check-dot { width:14px; height:14px; border-radius:3px; border:2px solid var(--gray-300); display:flex; align-items:center; justify-content:center; font-size:9px; flex-shrink:0; }
+    .check-item.checked .check-dot { background:var(--brand); border-color:var(--brand); color:#fff; }
 
-    /* ── Form elements ── */
-    .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
-    .form-row.triple > * { flex: 1; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .form-group.half { flex: 0 0 calc(50% - 8px); }
-    label { font-size: 13px; font-weight: 500; color: var(--gray-700); }
-    label .req { color: var(--danger); margin-left: 2px; }
-    label .hint { font-weight: 400; color: var(--gray-400); font-size: 12px; margin-left: 4px; }
+    /* tags */
+    .tag-input-wrap { border:1px solid var(--gray-300); border-radius:6px; padding:6px 10px; display:flex; flex-wrap:wrap; gap:6px; min-height:40px; cursor:text; background:#fff; }
+    .tag-input-wrap:focus-within { border-color:var(--brand); box-shadow:0 0 0 3px rgba(26,86,219,.12); }
+    .tag { display:inline-flex; align-items:center; gap:4px; background:var(--brand-light); color:var(--brand); border-radius:4px; padding:2px 8px; font-size:12.5px; font-weight:500; }
+    .tag.tag-green { background:var(--success-light); color:var(--success); }
+    .tag.tag-purple { background:var(--purple-light); color:var(--purple); }
+    .tag.tag-orange { background:var(--warning-light); color:var(--warning); }
+    .tag.tag-red { background:var(--danger-light); color:var(--danger); }
+    .tag-remove { background:none; border:none; cursor:pointer; color:inherit; font-size:14px; line-height:1; padding:0; opacity:.7; }
+    .tag-remove:hover { opacity:1; }
+    .tag-input { border:none; outline:none; font-size:13px; min-width:80px; flex:1; font-family:inherit; }
 
-    input[type="text"], select, textarea {
-      border: 1px solid var(--gray-300); border-radius: 6px;
-      padding: 8px 12px; font-size: 13.5px; color: var(--gray-800);
-      background: #fff; outline: none; width: 100%;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      font-family: inherit;
-    }
-    input[type="text"]:focus, select:focus, textarea:focus {
-      border-color: var(--brand); box-shadow: 0 0 0 3px rgba(26,86,219,0.12);
-    }
-    select { cursor: pointer; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px;
-    }
+    /* rule type cards */
+    .rule-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .rule-type-card { border:2px solid var(--gray-200); border-radius:var(--radius); padding:16px; cursor:pointer; transition:all .15s; position:relative; }
+    .rule-type-card:hover { border-color:var(--brand); background:var(--brand-light); }
+    .rule-type-card.selected { border-color:var(--brand); background:var(--brand-light); }
+    .rule-type-card .check { position:absolute; top:12px; right:12px; width:18px; height:18px; border-radius:50%; border:2px solid var(--gray-300); display:flex; align-items:center; justify-content:center; }
+    .rule-type-card.selected .check { background:var(--brand); border-color:var(--brand); color:#fff; font-size:10px; }
+    .rtype-icon { font-size:22px; margin-bottom:8px; }
+    .rtype-title { font-size:14px; font-weight:600; color:var(--gray-800); margin-bottom:4px; }
+    .rtype-desc { font-size:12px; color:var(--gray-500); line-height:1.5; }
 
-    .toggle-group { display: flex; gap: 0; border: 1px solid var(--gray-300); border-radius: 6px; overflow: hidden; }
-    .toggle-btn {
-      flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 500;
-      border: none; background: #fff; color: var(--gray-600); cursor: pointer;
-      transition: all 0.15s; border-right: 1px solid var(--gray-300);
-    }
-    .toggle-btn:last-child { border-right: none; }
-    .toggle-btn.active { background: var(--brand); color: #fff; }
-    .toggle-btn:hover:not(.active) { background: var(--gray-50); }
+    /* strategy cards */
+    .strategy-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+    .strategy-card { border:2px solid var(--gray-200); border-radius:var(--radius); padding:14px; cursor:pointer; transition:all .15s; position:relative; }
+    .strategy-card:hover { border-color:var(--brand); background:var(--brand-light); }
+    .strategy-card.selected { border-color:var(--brand); background:var(--brand-light); }
+    .strategy-card .strat-icon { font-size:20px; margin-bottom:6px; }
+    .strategy-card .strat-title { font-size:13px; font-weight:600; color:var(--gray-800); margin-bottom:3px; }
+    .strategy-card .strat-desc { font-size:11.5px; color:var(--gray-500); line-height:1.4; }
+    .strategy-card .check { position:absolute; top:10px; right:10px; width:16px; height:16px; border-radius:50%; border:2px solid var(--gray-300); display:flex; align-items:center; justify-content:center; }
+    .strategy-card.selected .check { background:var(--brand); border-color:var(--brand); color:#fff; font-size:9px; }
 
-    /* ── Tags / chips ── */
-    .tag-input-wrap { border: 1px solid var(--gray-300); border-radius: 6px; padding: 6px 10px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; cursor: text; background: #fff; }
-    .tag-input-wrap:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(26,86,219,0.12); }
-    .tag { display: flex; align-items: center; gap: 4px; background: var(--brand-light); color: var(--brand); border-radius: 4px; padding: 2px 8px; font-size: 12.5px; font-weight: 500; }
-    .tag-remove { background: none; border: none; cursor: pointer; color: var(--brand); font-size: 14px; line-height: 1; padding: 0; opacity: 0.7; }
-    .tag-remove:hover { opacity: 1; }
-    .tag-input { border: none; outline: none; font-size: 13px; min-width: 80px; flex: 1; font-family: inherit; }
+    /* sub-rules */
+    .sub-rules-list { display:flex; flex-direction:column; gap:10px; }
+    .sub-rule { border:1px solid var(--gray-200); border-radius:var(--radius); background:var(--gray-50); overflow:hidden; }
+    .sub-rule-header { display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer; border-bottom:1px solid transparent; transition:all .15s; }
+    .sub-rule.open .sub-rule-header { border-bottom-color:var(--gray-200); background:#fff; }
+    .sub-rule-num { width:22px; height:22px; border-radius:50%; background:var(--brand); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sub-rule-summary { flex:1; font-size:13px; }
+    .summary-title { font-weight:600; color:var(--gray-800); }
+    .summary-meta { font-size:12px; color:var(--gray-500); margin-top:1px; }
+    .sub-rule-actions { display:flex; gap:4px; }
+    .icon-btn { background:none; border:none; cursor:pointer; color:var(--gray-400); font-size:15px; padding:4px; border-radius:4px; transition:all .15s; }
+    .icon-btn:hover { background:var(--gray-200); color:var(--gray-700); }
+    .icon-btn.danger:hover { background:var(--danger-light); color:var(--danger); }
+    .chevron { transition:transform .2s; font-size:13px; color:var(--gray-400); }
+    .sub-rule.open .chevron { transform:rotate(180deg); }
+    .sub-rule-body { padding:16px; display:none; }
+    .sub-rule.open .sub-rule-body { display:block; }
 
-    /* ── Rule type selector ── */
-    .rule-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .rule-type-card {
-      border: 2px solid var(--gray-200); border-radius: var(--radius);
-      padding: 16px; cursor: pointer; transition: all 0.15s; position: relative;
-    }
-    .rule-type-card:hover { border-color: var(--brand); background: var(--brand-light); }
-    .rule-type-card.selected { border-color: var(--brand); background: var(--brand-light); }
-    .rule-type-card .check {
-      position: absolute; top: 12px; right: 12px;
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid var(--gray-300); display: flex; align-items: center; justify-content: center;
-    }
-    .rule-type-card.selected .check { background: var(--brand); border-color: var(--brand); color: #fff; font-size: 10px; }
-    .rule-type-card .rtype-icon { font-size: 22px; margin-bottom: 8px; }
-    .rule-type-card .rtype-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
-    .rule-type-card .rtype-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
-
-    /* ── Strategy selector ── */
-    .strategy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .strategy-card {
-      border: 2px solid var(--gray-200); border-radius: var(--radius);
-      padding: 14px; cursor: pointer; transition: all 0.15s; position: relative;
-    }
-    .strategy-card:hover { border-color: var(--brand); background: var(--brand-light); }
-    .strategy-card.selected { border-color: var(--brand); background: var(--brand-light); }
-    .strategy-card .strat-icon { font-size: 20px; margin-bottom: 6px; }
-    .strategy-card .strat-title { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 3px; }
-    .strategy-card .strat-desc { font-size: 11.5px; color: var(--gray-500); line-height: 1.4; }
-    .strategy-card .check { position: absolute; top: 10px; right: 10px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--gray-300); display: flex; align-items: center; justify-content: center; }
-    .strategy-card.selected .check { background: var(--brand); border-color: var(--brand); color: #fff; font-size: 9px; }
-
-    /* ── Sub-rules ── */
-    .sub-rules-list { display: flex; flex-direction: column; gap: 10px; }
-    .sub-rule {
-      border: 1px solid var(--gray-200); border-radius: var(--radius);
-      background: var(--gray-50); overflow: hidden;
-    }
-    .sub-rule-header {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; cursor: pointer;
-      border-bottom: 1px solid transparent; transition: all 0.15s;
-    }
-    .sub-rule.open .sub-rule-header { border-bottom-color: var(--gray-200); background: #fff; }
-    .sub-rule-num { width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .sub-rule-summary { flex: 1; font-size: 13px; }
-    .sub-rule-summary .summary-title { font-weight: 600; color: var(--gray-800); }
-    .sub-rule-summary .summary-meta { font-size: 12px; color: var(--gray-500); margin-top: 1px; }
-    .sub-rule-actions { display: flex; gap: 4px; }
-    .icon-btn { background: none; border: none; cursor: pointer; color: var(--gray-400); font-size: 15px; padding: 4px; border-radius: 4px; transition: all 0.15s; }
-    .icon-btn:hover { background: var(--gray-200); color: var(--gray-700); }
-    .icon-btn.danger:hover { background: var(--danger-light); color: var(--danger); }
-    .chevron { transition: transform 0.2s; font-size: 13px; color: var(--gray-400); }
-    .sub-rule.open .chevron { transform: rotate(180deg); }
-    .sub-rule-body { padding: 16px; display: none; }
-    .sub-rule.open .sub-rule-body { display: block; }
+    /* sub-rule sections */
+    .sr-section { margin-bottom:18px; }
+    .sr-section-label { display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; padding-bottom:7px; border-bottom:1px solid var(--gray-100); }
+    .sr-section-icon { font-size:14px; }
 
     /* ── Org Mapping table ── */
-    .mapping-table-wrap { border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; margin-top: 12px; }
-    .mapping-table-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
-    .mapping-table-header .mth-left { font-size: 13px; font-weight: 600; color: var(--gray-700); }
-    .mapping-table-header .mth-right { display: flex; gap: 8px; }
-    table.mapping { width: 100%; border-collapse: collapse; }
-    table.mapping th { background: var(--gray-50); padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--gray-600); text-align: left; border-bottom: 1px solid var(--gray-200); }
-    table.mapping td { padding: 9px 12px; font-size: 13px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
-    table.mapping tr:last-child td { border-bottom: none; }
-    table.mapping tr:hover td { background: var(--gray-50); }
-    .factory-name { font-weight: 500; color: var(--gray-800); }
-    .factory-meta { font-size: 11.5px; color: var(--gray-400); margin-top: 1px; }
-    .assignee-chip { display: inline-flex; align-items: center; gap: 6px; }
-    .avatar { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .mapping-wrap { border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; margin-top:0; }
+    .mapping-toolbar { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); flex-wrap:wrap; gap:8px; }
+    .mapping-toolbar-left { font-size:13px; font-weight:600; color:var(--gray-700); display:flex; align-items:center; gap:10px; }
+    .mapping-toolbar-right { display:flex; gap:8px; flex-wrap:wrap; }
+    .search-input-wrap { position:relative; }
+    .search-input-wrap input { padding-left:28px; width:180px; font-size:13px; }
+    .search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--gray-400); font-size:13px; pointer-events:none; }
 
-    /* ── Upload zone ── */
-    .upload-zone {
-      border: 2px dashed var(--gray-300); border-radius: var(--radius);
-      padding: 28px; text-align: center; cursor: pointer;
-      transition: all 0.2s; background: var(--gray-50); margin-top: 12px;
-    }
-    .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
-    .upload-zone .upload-icon { font-size: 32px; margin-bottom: 10px; }
-    .upload-zone .upload-title { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
-    .upload-zone .upload-sub { font-size: 12.5px; color: var(--gray-400); }
-    .upload-zone .upload-link { color: var(--brand); text-decoration: underline; cursor: pointer; }
+    .table-scroll { overflow-x:auto; }
+    table.mapping { width:100%; border-collapse:collapse; min-width:900px; }
+    table.mapping th { background:var(--gray-50); padding:9px 12px; font-size:11.5px; font-weight:700; color:var(--gray-600); text-align:left; border-bottom:2px solid var(--gray-200); white-space:nowrap; }
+    table.mapping th.sortable { cursor:pointer; user-select:none; }
+    table.mapping th.sortable:hover { color:var(--brand); }
+    table.mapping th .sort-icon { font-size:10px; margin-left:3px; color:var(--gray-400); }
+    table.mapping td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+    table.mapping tr:last-child td { border-bottom:none; }
+    table.mapping tr:hover td { background:#fafbff; }
+    table.mapping tr.selected-row td { background:var(--brand-light); }
 
-    /* ── Attribute map ── */
-    .attr-map-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
-    .attr-map-arrow { color: var(--gray-400); font-size: 16px; flex-shrink: 0; }
+    .col-factory { min-width:180px; }
+    .col-country { min-width:110px; }
+    .col-tier { min-width:90px; }
+    .col-category { min-width:130px; }
+    .col-bp { min-width:150px; }
+    .col-rating { min-width:160px; }
+    .col-events { min-width:170px; }
+    .col-assignee { min-width:160px; }
+    .col-updated { min-width:110px; }
+    .col-actions { min-width:80px; text-align:right; }
 
-    /* ── Badges ── */
-    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
-    .badge-active { background: var(--success-light); color: var(--success); }
-    .badge-inactive { background: var(--gray-100); color: var(--gray-500); }
-    .badge-warning { background: var(--warning-light); color: var(--warning); }
-    .badge-info { background: var(--brand-light); color: var(--brand); }
+    .factory-name { font-weight:600; color:var(--gray-800); }
+    .factory-id { font-size:11px; color:var(--gray-400); margin-top:1px; font-family:monospace; }
+    .flag { font-size:15px; margin-right:4px; }
+    .country-name { font-size:13px; color:var(--gray-700); }
 
-    /* ── Info banner ── */
-    .info-banner { background: var(--brand-light); border: 1px solid #c3d8ff; border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: var(--brand); display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
-    .warning-banner { background: var(--warning-light); border: 1px solid #fcd34d; border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: var(--warning); display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+    .assignee-chip { display:inline-flex; align-items:center; gap:6px; }
+    .avatar { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; }
+    .assignee-name { font-size:13px; color:var(--gray-800); font-weight:500; }
+    .assignee-role { font-size:11px; color:var(--gray-400); margin-top:1px; }
 
-    /* ── Buttons ── */
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 13.5px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
-    .btn-primary { background: var(--brand); color: #fff; }
-    .btn-primary:hover { background: var(--brand-hover); }
-    .btn-secondary { background: #fff; color: var(--gray-700); border: 1px solid var(--gray-300); }
-    .btn-secondary:hover { background: var(--gray-50); }
-    .btn-ghost { background: none; color: var(--brand); padding: 6px 10px; }
-    .btn-ghost:hover { background: var(--brand-light); }
-    .btn-danger-outline { background: #fff; color: var(--danger); border: 1px solid var(--danger); }
-    .btn-danger-outline:hover { background: var(--danger-light); }
-    .btn-sm { padding: 5px 10px; font-size: 12.5px; }
-    .btn-icon { padding: 7px; }
+    .multi-tags { display:flex; flex-wrap:wrap; gap:4px; }
+    .mini-tag { display:inline-flex; align-items:center; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:500; white-space:nowrap; }
+    .mini-tag-red { background:var(--danger-light); color:var(--danger); }
+    .mini-tag-orange { background:var(--warning-light); color:var(--warning); }
+    .mini-tag-blue { background:var(--brand-light); color:var(--brand); }
+    .mini-tag-green { background:var(--success-light); color:var(--success); }
+    .mini-tag-purple { background:var(--purple-light); color:var(--purple); }
+    .mini-tag-gray { background:var(--gray-100); color:var(--gray-600); }
+    .more-tag { font-size:11px; color:var(--gray-400); font-weight:500; cursor:pointer; }
+    .more-tag:hover { color:var(--brand); }
 
-    /* ── Footer actions ── */
-    .footer-actions { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 4px; border-top: 1px solid var(--gray-200); margin-top: 8px; }
-    .footer-actions .left { display: flex; gap: 10px; }
-    .footer-actions .right { display: flex; gap: 10px; }
+    .updated-date { font-size:12px; color:var(--gray-500); }
 
-    /* ── Simulate panel ── */
-    .simulate-panel { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 18px; margin-top: 16px; }
-    .simulate-panel h3 { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-    .simulate-result { background: var(--success-light); border: 1px solid #a7f3d0; border-radius: 6px; padding: 12px 16px; margin-top: 14px; display: none; }
-    .simulate-result.show { display: block; }
-    .simulate-result .result-title { font-size: 13px; font-weight: 700; color: var(--success); margin-bottom: 6px; }
-    .simulate-result .result-body { font-size: 13px; color: var(--gray-700); }
+    .row-actions { display:flex; gap:2px; justify-content:flex-end; opacity:0; transition:opacity .15s; }
+    tr:hover .row-actions { opacity:1; }
 
-    /* ── Misc ── */
-    .section-label { font-size: 12px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-    .add-row-btn { display: flex; align-items: center; gap: 6px; color: var(--brand); font-size: 13px; font-weight: 500; cursor: pointer; padding: 8px 12px; border-radius: 6px; width: fit-content; border: none; background: none; font-family: inherit; }
-    .add-row-btn:hover { background: var(--brand-light); }
-    .empty-state { text-align: center; padding: 28px; color: var(--gray-400); font-size: 13.5px; }
-    .empty-state .empty-icon { font-size: 28px; margin-bottom: 8px; }
+    .status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:5px; }
+    .status-dot.active { background:var(--success); }
+    .status-dot.warning { background:var(--warning); }
 
-    .conflict-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--warning-light); color: var(--warning); border-radius: 4px; padding: 2px 7px; font-size: 11.5px; font-weight: 600; }
+    .table-footer { padding:10px 14px; background:var(--gray-50); border-top:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    .table-footer-left { display:flex; align-items:center; gap:10px; }
+    .table-footer-right { font-size:12px; color:var(--gray-400); }
+    .pagination { display:flex; gap:4px; }
+    .page-btn { width:28px; height:28px; border-radius:4px; border:1px solid var(--gray-200); background:#fff; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-600); transition:all .15s; }
+    .page-btn:hover, .page-btn.active { background:var(--brand); color:#fff; border-color:var(--brand); }
 
-    /* ── Tabs ── */
-    .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; }
-    .tab { padding: 10px 16px; font-size: 13.5px; font-weight: 500; cursor: pointer; color: var(--gray-500); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
-    .tab:hover { color: var(--gray-800); }
-    .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+    /* upload zone */
+    .upload-zone { border:2px dashed var(--gray-300); border-radius:var(--radius); padding:28px; text-align:center; cursor:pointer; transition:all .2s; background:var(--gray-50); }
+    .upload-zone:hover { border-color:var(--brand); background:var(--brand-light); }
+    .upload-icon { font-size:32px; margin-bottom:10px; }
+    .upload-title { font-size:14px; font-weight:600; color:var(--gray-700); margin-bottom:4px; }
+    .upload-sub { font-size:12.5px; color:var(--gray-400); }
+    .upload-link { color:var(--brand); text-decoration:underline; cursor:pointer; }
 
-    /* ── Review summary ── */
-    .review-row { display: flex; gap: 16px; margin-bottom: 14px; }
-    .review-label { width: 160px; flex-shrink: 0; font-size: 13px; color: var(--gray-500); font-weight: 500; }
-    .review-val { font-size: 13px; color: var(--gray-800); }
+    /* attr map */
+    .attr-map-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+    .attr-map-arrow { color:var(--gray-400); font-size:16px; flex-shrink:0; }
 
-    @media (max-width: 700px) {
-      .strategy-grid { grid-template-columns: 1fr; }
-      .rule-type-grid { grid-template-columns: 1fr; }
-      .form-row { flex-direction: column; }
-      .sidebar { display: none; }
-      .main { padding: 16px; }
+    /* badges */
+    .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:12px; font-size:11.5px; font-weight:600; }
+    .badge-active { background:var(--success-light); color:var(--success); }
+    .badge-inactive { background:var(--gray-100); color:var(--gray-500); }
+    .badge-warning { background:var(--warning-light); color:var(--warning); }
+    .badge-info { background:var(--brand-light); color:var(--brand); }
+
+    /* banners */
+    .info-banner { background:var(--brand-light); border:1px solid #c3d8ff; border-radius:var(--radius); padding:12px 16px; font-size:13px; color:var(--brand); display:flex; gap:10px; align-items:flex-start; margin-bottom:16px; }
+    .warning-banner { background:var(--warning-light); border:1px solid #fcd34d; border-radius:var(--radius); padding:12px 16px; font-size:13px; color:var(--warning); display:flex; gap:10px; align-items:flex-start; margin-bottom:16px; }
+
+    /* buttons */
+    .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:6px; font-size:13.5px; font-weight:500; cursor:pointer; border:none; transition:all .15s; font-family:inherit; }
+    .btn-primary { background:var(--brand); color:#fff; }
+    .btn-primary:hover { background:var(--brand-hover); }
+    .btn-secondary { background:#fff; color:var(--gray-700); border:1px solid var(--gray-300); }
+    .btn-secondary:hover { background:var(--gray-50); }
+    .btn-ghost { background:none; color:var(--brand); padding:6px 10px; }
+    .btn-ghost:hover { background:var(--brand-light); }
+    .btn-danger-outline { background:#fff; color:var(--danger); border:1px solid var(--danger); }
+    .btn-danger-outline:hover { background:var(--danger-light); }
+    .btn-sm { padding:5px 10px; font-size:12.5px; }
+
+    /* footer */
+    .footer-actions { display:flex; justify-content:space-between; align-items:center; padding:20px 0 4px; border-top:1px solid var(--gray-200); margin-top:8px; }
+    .footer-actions .left, .footer-actions .right { display:flex; gap:10px; }
+
+    /* simulate */
+    .simulate-panel { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:18px; margin-top:16px; }
+    .simulate-panel h3 { font-size:14px; font-weight:700; color:var(--gray-800); margin-bottom:14px; }
+    .simulate-result { background:var(--success-light); border:1px solid #a7f3d0; border-radius:6px; padding:12px 16px; margin-top:14px; display:none; }
+    .simulate-result.show { display:block; }
+    .result-title { font-size:13px; font-weight:700; color:var(--success); margin-bottom:6px; }
+    .result-body { font-size:13px; color:var(--gray-700); }
+
+    /* misc */
+    .section-label { font-size:12px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+    .add-row-btn { display:flex; align-items:center; gap:6px; color:var(--brand); font-size:13px; font-weight:500; cursor:pointer; padding:8px 12px; border-radius:6px; width:fit-content; border:none; background:none; font-family:inherit; }
+    .add-row-btn:hover { background:var(--brand-light); }
+    .review-row { display:flex; gap:16px; margin-bottom:14px; }
+    .review-label { width:160px; flex-shrink:0; font-size:13px; color:var(--gray-500); font-weight:500; }
+    .review-val { font-size:13px; color:var(--gray-800); }
+
+    /* column toggle */
+    .col-toggle-wrap { position:relative; }
+    .col-toggle-panel { display:none; position:absolute; right:0; top:calc(100% + 6px); background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:12px; min-width:200px; z-index:50; }
+    .col-toggle-panel.open { display:block; }
+    .col-toggle-title { font-size:11.5px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+    .col-toggle-item { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:13px; color:var(--gray-700); cursor:pointer; }
+    .col-toggle-item input[type="checkbox"] { accent-color:var(--brand); width:14px; height:14px; cursor:pointer; }
+
+    @media (max-width:700px) {
+      .strategy-grid { grid-template-columns:1fr; }
+      .rule-type-grid { grid-template-columns:1fr; }
+      .form-row { flex-direction:column; }
+      .sidebar { display:none; }
+      .main { padding:16px; }
     }
   </style>
 </head>
 <body>
 
-<!-- Top nav -->
 <nav class="topnav">
   <div class="logo">Inspectorio</div>
   <span class="sep">/</span>
-  <span class="breadcrumb">Settings &rsaquo; Auto-Assignment &rsaquo; <span>New Rule</span></span>
+  <span class="breadcrumb">Settings › Auto-Assignment › <span>New Rule</span></span>
 </nav>
 
 <div class="layout">
-
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-section">Supply Chain</div>
     <div class="sidebar-item"><span class="sidebar-icon">📋</span> Assessments</div>
     <div class="sidebar-item"><span class="sidebar-icon">🔧</span> CAPAs</div>
     <div class="sidebar-section">Settings</div>
     <div class="sidebar-item"><span class="sidebar-icon">🏢</span> Organizations</div>
-    <div class="sidebar-item"><span class="sidebar-icon">👥</span> Users & Roles</div>
+    <div class="sidebar-item"><span class="sidebar-icon">👥</span> Users &amp; Roles</div>
     <div class="sidebar-item active"><span class="sidebar-icon">⚡</span> Auto-Assignment</div>
     <div class="sidebar-item"><span class="sidebar-icon">📊</span> Standards</div>
     <div class="sidebar-item"><span class="sidebar-icon">🔔</span> Notifications</div>
   </aside>
 
-  <!-- Main content -->
   <main class="main">
-
     <div class="page-header">
       <h1>Create Auto-Assignment Rule</h1>
       <p>Define when and how assessments or CAPAs are automatically assigned to team members.</p>
     </div>
 
-    <!-- Steps -->
     <div class="steps">
-      <div class="step done" id="step-indicator-1">
-        <div class="step-num">✓</div>
-        <div class="step-label">Basic Info</div>
-      </div>
+      <div class="step done" id="step-indicator-1"><div class="step-num">✓</div><div class="step-label">Basic Info</div></div>
       <div class="step-divider"></div>
-      <div class="step active" id="step-indicator-2">
-        <div class="step-num">2</div>
-        <div class="step-label">Rule &amp; Strategy</div>
-      </div>
+      <div class="step active" id="step-indicator-2"><div class="step-num">2</div><div class="step-label">Sub-rules &amp; Assignees</div></div>
       <div class="step-divider"></div>
-      <div class="step" id="step-indicator-3">
-        <div class="step-num">3</div>
-        <div class="step-label">Review &amp; Activate</div>
-      </div>
+      <div class="step" id="step-indicator-3"><div class="step-num">3</div><div class="step-label">Review &amp; Activate</div></div>
     </div>
 
-    <!-- ═══════════════════════════════ STEP 1 ═══════════════════════════════ -->
+    <!-- ══════════════ STEP 1 ══════════════ -->
     <div id="page-1">
-
       <div class="card">
         <div class="card-title">📝 Basic Information</div>
-        <div class="card-subtitle">Give this rule a name and define when it should trigger.</div>
+        <div class="card-subtitle">Give this rule a name. Trigger events and assessment attributes are configured per sub-rule in the next step.</div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Rule Name <span class="req">*</span></label>
-            <input type="text" id="rule-name" value="Remediation Assignment — Performance Elevation" placeholder="e.g. Vietnam QA Rule" />
+            <input type="text" value="Remediation Assignment — Performance Elevation" placeholder="e.g. Vietnam QA Rule" />
           </div>
           <div class="form-group half">
             <label>Status</label>
             <div class="toggle-group">
-              <button class="toggle-btn" onclick="setStatus(this,'inactive')">Inactive</button>
-              <button class="toggle-btn active" onclick="setStatus(this,'active')">Active</button>
+              <button class="toggle-btn" onclick="toggleBtn(this)">Inactive</button>
+              <button class="toggle-btn active" onclick="toggleBtn(this)">Active</button>
             </div>
           </div>
         </div>
 
         <hr class="card-divider" />
-        <div class="section-label">Trigger Event <span class="req">*</span></div>
-
-        <div class="form-row triple">
-          <div class="rule-type-card selected" onclick="selectTrigger(this,'submitted')" id="trig-submitted" style="cursor:pointer">
-            <div class="check">✓</div>
-            <div class="rtype-icon">📤</div>
-            <div class="rtype-title">Assessment Submitted</div>
-            <div class="rtype-desc">Fires when an assessment transitions to Submitted status.</div>
-          </div>
-          <div class="rule-type-card" onclick="selectTrigger(this,'created')" id="trig-created">
-            <div class="check"></div>
-            <div class="rtype-icon">🆕</div>
-            <div class="rtype-title">Assessment Created</div>
-            <div class="rtype-desc">Fires the moment a new assessment is created.</div>
-          </div>
-          <div class="rule-type-card" onclick="selectTrigger(this,'capa')" id="trig-capa">
-            <div class="check"></div>
-            <div class="rtype-icon">🔄</div>
-            <div class="rtype-title">CAPA Submitted</div>
-            <div class="rtype-desc">Fires when a supplier submits a CAPA response.</div>
-          </div>
-        </div>
-
-        <hr class="card-divider" />
-
         <div class="form-row">
           <div class="form-group">
             <label>Workflow <span class="hint">(scope)</span></label>
@@ -434,85 +361,285 @@
             </select>
           </div>
         </div>
+        <hr class="card-divider" />
 
-        <div id="result-filter-section">
-          <div class="info-banner">
-            <span>ℹ️</span>
-            <div><strong>Result Filter available</strong> — because you selected "Assessment Submitted", you can optionally restrict this rule to specific assessment outcomes only.</div>
-          </div>
-          <div class="form-group">
-            <label>Assessment Rating Filter <span class="hint">(optional — leave empty to apply to all results)</span></label>
-            <div class="tag-input-wrap" onclick="this.querySelector('input').focus()">
-              <span class="tag">Needs Improvement <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-              <span class="tag">Probation <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-              <span class="tag">Immediate Resolution <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-              <input class="tag-input" placeholder="Add rating..." onkeydown="addTag(event,this)" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-actions">
-        <div class="left"><button class="btn btn-secondary" onclick="goTo(0)">← Back</button></div>
-        <div class="right">
-          <button class="btn btn-secondary">Save Draft</button>
-          <button class="btn btn-primary" onclick="goTo(2)">Continue to Rule &amp; Strategy →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════ STEP 2 ═══════════════════════════════ -->
-    <div id="page-2" style="display:none">
-
-      <div class="card">
-        <div class="card-title">⚙️ Rule Type</div>
-        <div class="card-subtitle">Choose how conditions and strategies are structured in this rule.</div>
+        <!-- Rule type -->
+        <div class="section-label">Rule Type <span class="req">*</span></div>
         <div class="rule-type-grid">
           <div class="rule-type-card" onclick="selectRuleType(this,'single')" id="rt-single">
             <div class="check"></div>
             <div class="rtype-icon">1️⃣</div>
             <div class="rtype-title">Single Rule</div>
-            <div class="rtype-desc">One condition + one strategy. Simple and direct — e.g. Country = Vietnam → Assign to Sarah.</div>
+            <div class="rtype-desc">One condition + one strategy. Simple and direct.</div>
           </div>
           <div class="rule-type-card selected" onclick="selectRuleType(this,'ruleset')" id="rt-ruleset">
             <div class="check">✓</div>
             <div class="rtype-icon">🔢</div>
             <div class="rtype-title">Rule Set</div>
-            <div class="rtype-desc">Multiple ordered sub-rules. System evaluates top-to-bottom; first match wins. Best for tiered/cascading logic.</div>
+            <div class="rtype-desc">Multiple ordered sub-rules evaluated top-to-bottom. Best for tiered/cascading logic.</div>
           </div>
         </div>
       </div>
 
-      <!-- Rule set builder -->
-      <div id="ruleset-section">
+      <div class="footer-actions">
+        <div class="left"></div>
+        <div class="right">
+          <button class="btn btn-secondary">Save Draft</button>
+          <button class="btn btn-primary" onclick="goTo(2)">Continue to Sub-rules →</button>
+        </div>
+      </div>
+    </div>
 
-        <div class="card">
-          <div class="card-title">📐 Sub-rules <span class="badge badge-info" style="font-size:12px;margin-left:4px">3 rules</span></div>
-          <div class="card-subtitle">Rules are evaluated in order. Drag to reorder. First match wins — add a catch-all "Always" rule at the bottom as fallback.</div>
+    <!-- ══════════════ STEP 2 ══════════════ -->
+    <div id="page-2" style="display:none">
 
-          <div class="sub-rules-list" id="subrules-list">
+      <!-- Excel Import at RULE level -->
+      <div class="card">
+        <div class="card-title">📂 Org Mapping — Excel Import <span class="badge badge-info" style="font-size:11.5px;margin-left:4px">Rule-level</span></div>
+        <div class="card-subtitle">Import a single Excel file that maps factories to assignees across this entire rule. Sub-rules then apply conditions and events on top of this mapping.</div>
 
-            <!-- Sub-rule 1 -->
-            <div class="sub-rule open" id="sr-1">
-              <div class="sub-rule-header" onclick="toggleSubrule('sr-1')">
-                <div class="sub-rule-num">1</div>
-                <div class="sub-rule-summary">
-                  <div class="summary-title">Tier 1 Factories → Org Mapping (PM/BIM per factory)</div>
-                  <div class="summary-meta">When Tier = Tier 1 · Org Mapping strategy</div>
-                </div>
-                <div class="sub-rule-actions">
-                  <button class="icon-btn" title="Move up">↑</button>
-                  <button class="icon-btn" title="Move down">↓</button>
-                  <button class="icon-btn danger" title="Remove" onclick="event.stopPropagation();removeSubrule('sr-1')">🗑</button>
-                </div>
-                <span class="chevron">▾</span>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="showUpload()">⬆ Import Excel</button>
+          <button class="btn btn-secondary btn-sm">⬇ Export Mapping</button>
+          <button class="btn btn-secondary btn-sm">⬇ Download Template</button>
+        </div>
+
+        <!-- ═══ RICH TABLE ═══ -->
+        <div class="mapping-wrap">
+          <div class="mapping-toolbar">
+            <div class="mapping-toolbar-left">
+              <span>Factory → Assignee Mapping</span>
+              <span class="badge badge-info">12 rows</span>
+              <span style="font-size:12px;color:var(--danger);font-weight:500">⚠ 1 unassigned</span>
+            </div>
+            <div class="mapping-toolbar-right">
+              <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search factory or assignee…" style="padding-left:28px;width:200px;font-size:13px" />
               </div>
-              <div class="sub-rule-body">
+              <button class="btn btn-secondary btn-sm" onclick="toggleColPanel()">⚙ Columns</button>
+              <button class="btn btn-secondary btn-sm">Filter</button>
+              <div class="col-toggle-wrap">
+                <div class="col-toggle-panel" id="col-panel">
+                  <div class="col-toggle-title">Show / Hide Columns</div>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-country',this)"> Country</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-tier',this)"> Tier</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-category',this)"> Product Category</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-bp',this)"> Business Partner</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-rating',this)"> Assessment Rating</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-events',this)"> Trigger Events</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-updated',this)"> Last Updated</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table class="mapping" id="mapping-table">
+              <thead>
+                <tr>
+                  <th style="width:32px"><input type="checkbox" style="accent-color:var(--brand)" /></th>
+                  <th class="col-factory sortable">Factory <span class="sort-icon">↕</span></th>
+                  <th class="col-country sortable" data-col="col-country">Country <span class="sort-icon">↕</span></th>
+                  <th class="col-tier sortable" data-col="col-tier">Tier <span class="sort-icon">↕</span></th>
+                  <th class="col-category" data-col="col-category">Product Category</th>
+                  <th class="col-bp" data-col="col-bp">Business Partner</th>
+                  <th class="col-rating" data-col="col-rating">Assessment Rating</th>
+                  <th class="col-events" data-col="col-events">Trigger Events</th>
+                  <th class="col-assignee sortable">Assignee <span class="sort-icon">↕</span></th>
+                  <th class="col-updated" data-col="col-updated">Last Updated</th>
+                  <th class="col-actions"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Win Sheng Garment Co.</div><div class="factory-id">#405999</div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇻🇳</span><span class="country-name">Vietnam</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Apparel</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target APAC</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-orange">Probation</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#1a56db">MT</div><div><div class="assignee-name">Minh Tran</div><div class="assignee-role">QA Lead, APAC</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 10, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 2 -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Ningbo Brother Apparel Co.</div><div class="factory-id">#16794883</div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇨🇳</span><span class="country-name">China</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Apparel</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target CN</span><span class="mini-tag mini-tag-purple">Target APAC</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#7c3aed">SK</div><div><div class="assignee-name">Sothavy Keo</div><div class="assignee-role">QA Manager, CN</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 10, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 3 -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Hanoi Textile Manufacturing</div><div class="factory-id">#20113456</div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇻🇳</span><span class="country-name">Vietnam</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Textiles</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target APAC</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-orange">Probation</span><span class="more-tag">+1</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#0e9f6e">AL</div><div><div class="assignee-name">Anna Le</div><div class="assignee-role">QA Lead, VN</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 8, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 4 -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Saigon Weave Industries</div><div class="factory-id">#29884412</div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇻🇳</span><span class="country-name">Vietnam</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-gray">Tier 2</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Textiles</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Vendor VN-3</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-orange">Probation</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#c27803">DP</div><div><div class="assignee-name">David Park</div><div class="assignee-role">QA Lead, APAC</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Mar 28, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 5 — unassigned warning -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Dhaka Garments Ltd.</div><div class="factory-id">#33210987</div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇧🇩</span><span class="country-name">Bangladesh</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Apparel</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target BD</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-assignee">
+                    <div style="display:inline-flex;align-items:center;gap:6px;color:var(--danger);font-size:13px;font-weight:500">
+                      <span>⚠️</span> Unassigned
+                      <button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:12px" onclick="alert('Open assignee picker')">Assign</button>
+                    </div>
+                  </td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 1, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 6 -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Phnom Penh Apparel</div><div class="factory-id">#40021378</div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇰🇭</span><span class="country-name">Cambodia</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-gray" style="background:#f0fdf4;color:#166534">No Tier</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Footwear</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Vendor KH-1</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#0e9f6e">SK</div><div><div class="assignee-name">Sothavy Keo</div><div class="assignee-role">QA Manager, KH</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Mar 20, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <div class="table-footer-left">
+              <button class="add-row-btn" style="padding:5px 10px;font-size:12.5px">+ Add row manually</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--gray-500)" onclick="alert('Bulk edit selected rows')">Bulk edit</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px">
+              <div class="table-footer-right">Showing 6 of 12 rows</div>
+              <div class="pagination">
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">›</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="warning-banner" style="margin-top:12px;margin-bottom:0">
+          <span>⚠️</span>
+          <div><strong>1 factory has no assignee (Dhaka Garments Ltd.).</strong> It will fall through to the Fallback User when the rule fires. <a href="#" style="color:var(--warning);font-weight:600">Fix now →</a></div>
+        </div>
+      </div>
+
+      <!-- Sub-rules -->
+      <div class="card">
+        <div class="card-title">📐 Sub-rules <span class="badge badge-info" style="font-size:12px;margin-left:4px">3 rules</span></div>
+        <div class="card-subtitle">Each sub-rule filters the org mapping using <strong>Org Attributes</strong>, <strong>Assessment Attributes</strong> (including Rating), and <strong>Trigger Events</strong>. Evaluated top-to-bottom — first match wins.</div>
+
+        <div class="sub-rules-list" id="subrules-list">
+
+          <!-- SR 1 -->
+          <div class="sub-rule open" id="sr-1">
+            <div class="sub-rule-header" onclick="toggleSubrule('sr-1')">
+              <div class="sub-rule-num">1</div>
+              <div class="sub-rule-summary">
+                <div class="summary-title">Tier 1 · Rating: Needs Improvement / Probation / Immediate Resolution · On Submit</div>
+                <div class="summary-meta">Org Mapping strategy · Events: Assessment Submitted, CAPA Submitted</div>
+              </div>
+              <div class="sub-rule-actions">
+                <button class="icon-btn" onclick="event.stopPropagation()">↑</button>
+                <button class="icon-btn" onclick="event.stopPropagation()">↓</button>
+                <button class="icon-btn danger" onclick="event.stopPropagation();removeSubrule('sr-1')">🗑</button>
+              </div>
+              <span class="chevron">▾</span>
+            </div>
+            <div class="sub-rule-body">
+
+              <!-- Trigger Events -->
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">⚡</span> Trigger Events <span class="req">*</span></div>
+                <div class="check-group">
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" /><span class="check-dot"></span>New Assessment</label>
+                  <label class="check-item checked" onclick="toggleCheck(this)"><input type="checkbox" checked /><span class="check-dot">✓</span>Assessment Submitted</label>
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" /><span class="check-dot"></span>Assessment Completed</label>
+                  <label class="check-item checked" onclick="toggleCheck(this)"><input type="checkbox" checked /><span class="check-dot">✓</span>CAPA Submitted</label>
+                </div>
+              </div>
+
+              <!-- Assessment Attributes -->
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">📋</span> Assessment Attributes</div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Assessment Rating <span class="hint">(optional — leave empty to match all)</span></label>
+                    <div class="tag-input-wrap" onclick="this.querySelector('input').focus()">
+                      <span class="tag tag-red">Needs Improvement <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                      <span class="tag tag-orange">Probation <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                      <span class="tag tag-red">Immediate Resolution <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                      <input class="tag-input" placeholder="Add rating…" onkeydown="addTag(event,this)" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Rating Label <span class="hint">(optional)</span></label>
+                    <select><option value="">All rating labels</option><option>Approval</option><option>Compliance</option></select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Scheme Name <span class="hint">(optional)</span></label>
+                    <select><option value="">All schemes</option><option>SMETA</option><option>BSCI</option><option>SA8000</option></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Custom Fields <span class="hint">(optional)</span></label>
+                    <input type="text" placeholder="e.g. Approval = Yes" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Org Attributes -->
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">🏢</span> Org Attributes (Condition)</div>
                 <div class="form-row">
                   <div class="form-group half">
-                    <label>Condition Attribute</label>
+                    <label>Attribute</label>
                     <select>
-                      <option>Organization Tier</option>
+                      <option selected>Organization Tier</option>
                       <option>Organization Country</option>
                       <option>Organization Status</option>
                       <option>Associated Business Partner</option>
@@ -522,9 +649,9 @@
                   <div class="form-group half">
                     <label>Operator</label>
                     <div class="toggle-group">
-                      <button class="toggle-btn active" onclick="toggleOp(this)">Equals</button>
-                      <button class="toggle-btn" onclick="toggleOp(this)">Is not set</button>
-                      <button class="toggle-btn" onclick="toggleOp(this)">Always</button>
+                      <button class="toggle-btn active" onclick="toggleBtn(this)">Equals</button>
+                      <button class="toggle-btn" onclick="toggleBtn(this)">Is not set</button>
+                      <button class="toggle-btn" onclick="toggleBtn(this)">Always</button>
                     </div>
                   </div>
                 </div>
@@ -534,20 +661,23 @@
                     <select><option selected>Tier 1</option><option>Tier 2</option><option>Tier 3</option></select>
                   </div>
                 </div>
-                <hr class="card-divider" />
-                <div class="section-label">Assignment Strategy</div>
+              </div>
+
+              <!-- Assignment Strategy -->
+              <div class="sr-section" style="margin-bottom:0">
+                <div class="sr-section-label"><span class="sr-section-icon">🎯</span> Assignment Strategy</div>
                 <div class="strategy-grid">
                   <div class="strategy-card" onclick="selectStrategy(this,'direct','sr-1')">
                     <div class="check"></div>
                     <div class="strat-icon">🎯</div>
                     <div class="strat-title">Direct Assign</div>
-                    <div class="strat-desc">Assign to one specific user, role, or group.</div>
+                    <div class="strat-desc">Assign one specific user, role, or group.</div>
                   </div>
                   <div class="strategy-card selected" onclick="selectStrategy(this,'org','sr-1')">
                     <div class="check">✓</div>
                     <div class="strat-icon">🗺️</div>
                     <div class="strat-title">Org Mapping</div>
-                    <div class="strat-desc">Factory-by-factory lookup. Supports Excel import.</div>
+                    <div class="strat-desc">Use the imported rule-level factory mapping above.</div>
                   </div>
                   <div class="strategy-card" onclick="selectStrategy(this,'attr','sr-1')">
                     <div class="check"></div>
@@ -556,257 +686,152 @@
                     <div class="strat-desc">Map each attribute value to an assignee.</div>
                   </div>
                 </div>
-
-                <!-- Org Mapping content for SR1 -->
-                <div id="strategy-content-sr-1" style="margin-top:16px">
-                  <div class="mapping-table-wrap">
-                    <div class="mapping-table-header">
-                      <div class="mth-left">Factory → Assignee Mapping <span style="color:var(--gray-400);font-weight:400;margin-left:6px">12 rows</span></div>
-                      <div class="mth-right">
-                        <button class="btn btn-secondary btn-sm" onclick="showUpload()">⬆ Import Excel</button>
-                        <button class="btn btn-secondary btn-sm">⬇ Export</button>
-                        <button class="btn btn-secondary btn-sm">🔍 Search</button>
-                      </div>
-                    </div>
-                    <table class="mapping">
-                      <thead>
-                        <tr>
-                          <th>Factory</th>
-                          <th>Country</th>
-                          <th>Tier</th>
-                          <th>Assignee</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><div class="factory-name">Win Sheng Garment Co.</div><div class="factory-meta">ID: 405999</div></td>
-                          <td>🇻🇳 Vietnam</td>
-                          <td><span class="badge badge-info">Tier 1</span></td>
-                          <td><div class="assignee-chip"><div class="avatar" style="background:#1a56db">MT</div> Minh Tran</div></td>
-                          <td><button class="icon-btn">✏️</button></td>
-                        </tr>
-                        <tr>
-                          <td><div class="factory-name">Ningbo Brother Apparel Co.</div><div class="factory-meta">ID: 16794883</div></td>
-                          <td>🇨🇳 China</td>
-                          <td><span class="badge badge-info">Tier 1</span></td>
-                          <td><div class="assignee-chip"><div class="avatar" style="background:#7c3aed">SK</div> Sothavy Keo</div></td>
-                          <td><button class="icon-btn">✏️</button></td>
-                        </tr>
-                        <tr>
-                          <td><div class="factory-name">Hanoi Textile Manufacturing</div><div class="factory-meta">ID: 20113456</div></td>
-                          <td>🇻🇳 Vietnam</td>
-                          <td><span class="badge badge-info">Tier 1</span></td>
-                          <td><div class="assignee-chip"><div class="avatar" style="background:#0e9f6e">AL</div> Anna Le</div></td>
-                          <td><button class="icon-btn">✏️</button></td>
-                        </tr>
-                        <tr>
-                          <td><div class="factory-name">Dhaka Garments Ltd.</div><div class="factory-meta">ID: 33210987</div></td>
-                          <td>🇧🇩 Bangladesh</td>
-                          <td><span class="badge badge-info">Tier 1</span></td>
-                          <td>
-                            <div class="assignee-chip">
-                              <div class="avatar" style="background:#e02424">⚠</div>
-                              <span style="color:var(--danger);font-weight:500">Unassigned</span>
-                            </div>
-                          </td>
-                          <td><button class="icon-btn">✏️</button></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div style="padding:10px 14px;background:var(--gray-50);border-top:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between">
-                      <button class="add-row-btn" onclick="addRow()">+ Add factory row</button>
-                      <div style="font-size:12px;color:var(--gray-400)">Showing 4 of 12 rows</div>
-                    </div>
-                  </div>
-                  <div class="warning-banner" style="margin-top:12px;margin-bottom:0">
-                    <span>⚠️</span>
-                    <div><strong>1 factory has no assignee.</strong> Rows without an assignee will fall through to the next sub-rule or Fallback User. <a href="#" style="color:var(--warning);font-weight:600">Fix now →</a></div>
+                <div id="strategy-content-sr-1" style="margin-top:12px">
+                  <div class="info-banner" style="margin-bottom:0">
+                    <span>ℹ️</span>
+                    <div>This sub-rule uses the <strong>Org Mapping table</strong> imported above. Rows matching Tier 1 + the assessment attributes and events defined here will be assigned to their mapped person.</div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Sub-rule 2 -->
-            <div class="sub-rule" id="sr-2">
-              <div class="sub-rule-header" onclick="toggleSubrule('sr-2')">
-                <div class="sub-rule-num">2</div>
-                <div class="sub-rule-summary">
-                  <div class="summary-title">Tier 2 Factories → Direct Assign to David Park</div>
-                  <div class="summary-meta">When Tier = Tier 2 · Direct Assign strategy</div>
-                </div>
-                <div class="sub-rule-actions">
-                  <button class="icon-btn" title="Move up">↑</button>
-                  <button class="icon-btn" title="Move down">↓</button>
-                  <button class="icon-btn danger" title="Remove" onclick="event.stopPropagation();removeSubrule('sr-2')">🗑</button>
-                </div>
-                <span class="chevron">▾</span>
+          <!-- SR 2 -->
+          <div class="sub-rule" id="sr-2">
+            <div class="sub-rule-header" onclick="toggleSubrule('sr-2')">
+              <div class="sub-rule-num">2</div>
+              <div class="sub-rule-summary">
+                <div class="summary-title">Tier 2 · Any Rating · On Submit → Direct Assign to David Park</div>
+                <div class="summary-meta">Direct Assign strategy · Events: Assessment Submitted</div>
               </div>
-              <div class="sub-rule-body">
+              <div class="sub-rule-actions">
+                <button class="icon-btn" onclick="event.stopPropagation()">↑</button>
+                <button class="icon-btn" onclick="event.stopPropagation()">↓</button>
+                <button class="icon-btn danger" onclick="event.stopPropagation();removeSubrule('sr-2')">🗑</button>
+              </div>
+              <span class="chevron">▾</span>
+            </div>
+            <div class="sub-rule-body">
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">⚡</span> Trigger Events <span class="req">*</span></div>
+                <div class="check-group">
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>New Assessment</label>
+                  <label class="check-item checked" onclick="toggleCheck(this)"><input type="checkbox" checked/><span class="check-dot">✓</span>Assessment Submitted</label>
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>Assessment Completed</label>
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>CAPA Submitted</label>
+                </div>
+              </div>
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">📋</span> Assessment Attributes</div>
                 <div class="form-row">
-                  <div class="form-group half">
-                    <label>Condition Attribute</label>
-                    <select><option selected>Organization Tier</option></select>
-                  </div>
-                  <div class="form-group half">
-                    <label>Operator</label>
-                    <div class="toggle-group">
-                      <button class="toggle-btn active" onclick="toggleOp(this)">Equals</button>
-                      <button class="toggle-btn" onclick="toggleOp(this)">Is not set</button>
-                      <button class="toggle-btn" onclick="toggleOp(this)">Always</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group half">
-                    <label>Value</label>
-                    <select><option>Tier 1</option><option selected>Tier 2</option><option>Tier 3</option></select>
-                  </div>
-                </div>
-                <hr class="card-divider" />
-                <div class="section-label">Assignment Strategy</div>
-                <div class="strategy-grid">
-                  <div class="strategy-card selected" onclick="selectStrategy(this,'direct','sr-2')">
-                    <div class="check">✓</div>
-                    <div class="strat-icon">🎯</div>
-                    <div class="strat-title">Direct Assign</div>
-                    <div class="strat-desc">Assign to one specific user, role, or group.</div>
-                  </div>
-                  <div class="strategy-card" onclick="selectStrategy(this,'org','sr-2')">
-                    <div class="check"></div>
-                    <div class="strat-icon">🗺️</div>
-                    <div class="strat-title">Org Mapping</div>
-                    <div class="strat-desc">Factory-by-factory lookup. Supports Excel import.</div>
-                  </div>
-                  <div class="strategy-card" onclick="selectStrategy(this,'attr','sr-2')">
-                    <div class="check"></div>
-                    <div class="strat-icon">🔑</div>
-                    <div class="strat-title">Attribute Map</div>
-                    <div class="strat-desc">Map each attribute value to an assignee.</div>
-                  </div>
-                </div>
-                <div id="strategy-content-sr-2" style="margin-top:16px">
                   <div class="form-group">
-                    <label>Assign To <span class="req">*</span></label>
-                    <select>
-                      <option>Select user, role, or group…</option>
-                      <option selected>David Park (QA Lead, APAC)</option>
-                      <option>Sarah Chen (QA Manager)</option>
-                      <option>Role: Admin</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Sub-rule 3 -->
-            <div class="sub-rule" id="sr-3">
-              <div class="sub-rule-header" onclick="toggleSubrule('sr-3')">
-                <div class="sub-rule-num" style="background:var(--gray-400)">3</div>
-                <div class="sub-rule-summary">
-                  <div class="summary-title">No Tier Set → Attribute Map (Country → Country QA Lead)</div>
-                  <div class="summary-meta">When Tier is not set · Attribute Map strategy</div>
-                </div>
-                <div class="sub-rule-actions">
-                  <button class="icon-btn">↑</button>
-                  <button class="icon-btn">↓</button>
-                  <button class="icon-btn danger" onclick="event.stopPropagation();removeSubrule('sr-3')">🗑</button>
-                </div>
-                <span class="chevron">▾</span>
-              </div>
-              <div class="sub-rule-body">
-                <div class="form-row">
-                  <div class="form-group half">
-                    <label>Condition Attribute</label>
-                    <select><option selected>Organization Tier</option></select>
-                  </div>
-                  <div class="form-group half">
-                    <label>Operator</label>
-                    <div class="toggle-group">
-                      <button class="toggle-btn" onclick="toggleOp(this)">Equals</button>
-                      <button class="toggle-btn active" onclick="toggleOp(this)">Is not set</button>
-                      <button class="toggle-btn" onclick="toggleOp(this)">Always</button>
+                    <label>Assessment Rating <span class="hint">(leave empty = all ratings)</span></label>
+                    <div class="tag-input-wrap" onclick="this.querySelector('input').focus()">
+                      <input class="tag-input" placeholder="Leave empty to match all ratings…" onkeydown="addTag(event,this)" />
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label>Rating Label <span class="hint">(optional)</span></label>
+                    <select><option value="">All rating labels</option><option>Approval</option></select>
+                  </div>
                 </div>
-                <hr class="card-divider" />
-                <div class="section-label">Assignment Strategy</div>
+              </div>
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">🏢</span> Org Attributes (Condition)</div>
+                <div class="form-row">
+                  <div class="form-group half"><label>Attribute</label><select><option selected>Organization Tier</option></select></div>
+                  <div class="form-group half"><label>Operator</label><div class="toggle-group"><button class="toggle-btn active" onclick="toggleBtn(this)">Equals</button><button class="toggle-btn" onclick="toggleBtn(this)">Is not set</button><button class="toggle-btn" onclick="toggleBtn(this)">Always</button></div></div>
+                </div>
+                <div class="form-row"><div class="form-group half"><label>Value</label><select><option>Tier 1</option><option selected>Tier 2</option><option>Tier 3</option></select></div></div>
+              </div>
+              <div class="sr-section" style="margin-bottom:0">
+                <div class="sr-section-label"><span class="sr-section-icon">🎯</span> Assignment Strategy</div>
                 <div class="strategy-grid">
-                  <div class="strategy-card" onclick="selectStrategy(this,'direct','sr-3')">
-                    <div class="check"></div>
-                    <div class="strat-icon">🎯</div>
-                    <div class="strat-title">Direct Assign</div>
-                    <div class="strat-desc">Assign to one specific user, role, or group.</div>
-                  </div>
-                  <div class="strategy-card" onclick="selectStrategy(this,'org','sr-3')">
-                    <div class="check"></div>
-                    <div class="strat-icon">🗺️</div>
-                    <div class="strat-title">Org Mapping</div>
-                    <div class="strat-desc">Factory-by-factory lookup. Supports Excel import.</div>
-                  </div>
-                  <div class="strategy-card selected" onclick="selectStrategy(this,'attr','sr-3')">
-                    <div class="check">✓</div>
-                    <div class="strat-icon">🔑</div>
-                    <div class="strat-title">Attribute Map</div>
-                    <div class="strat-desc">Map each attribute value to an assignee.</div>
-                  </div>
+                  <div class="strategy-card selected" onclick="selectStrategy(this,'direct','sr-2')"><div class="check">✓</div><div class="strat-icon">🎯</div><div class="strat-title">Direct Assign</div><div class="strat-desc">Assign one specific user, role, or group.</div></div>
+                  <div class="strategy-card" onclick="selectStrategy(this,'org','sr-2')"><div class="check"></div><div class="strat-icon">🗺️</div><div class="strat-title">Org Mapping</div><div class="strat-desc">Use the imported rule-level factory mapping.</div></div>
+                  <div class="strategy-card" onclick="selectStrategy(this,'attr','sr-2')"><div class="check"></div><div class="strat-icon">🔑</div><div class="strat-title">Attribute Map</div><div class="strat-desc">Map each attribute value to an assignee.</div></div>
                 </div>
-                <div id="strategy-content-sr-3" style="margin-top:16px">
-                  <div class="form-group" style="margin-bottom:12px">
-                    <label>Map by Attribute</label>
-                    <select><option selected>Organization Country</option><option>Organization Tier</option></select>
-                  </div>
-                  <div class="section-label">Value → Assignee Mapping</div>
-                  <div class="attr-map-row"><input type="text" value="Vietnam" style="max-width:140px" /><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Minh Tran</option></select><button class="icon-btn danger">🗑</button></div>
-                  <div class="attr-map-row"><input type="text" value="Cambodia" style="max-width:140px" /><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Sothavy Keo</option></select><button class="icon-btn danger">🗑</button></div>
-                  <div class="attr-map-row"><input type="text" value="India" style="max-width:140px" /><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Meghna Rathore</option></select><button class="icon-btn danger">🗑</button></div>
-                  <div class="attr-map-row"><input type="text" value="Thailand" style="max-width:140px" /><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Anna Le</option></select><button class="icon-btn danger">🗑</button></div>
-                  <button class="add-row-btn" onclick="addAttrRow()">+ Add country mapping</button>
+                <div id="strategy-content-sr-2" style="margin-top:12px">
+                  <div class="form-group half"><label>Assign To <span class="req">*</span></label><select><option selected>David Park (QA Lead, APAC)</option><option>Sarah Chen</option><option>Role: Admin</option></select></div>
                 </div>
               </div>
             </div>
-
           </div>
 
-          <button class="add-row-btn" style="margin-top:12px" onclick="addSubrule()">+ Add sub-rule</button>
+          <!-- SR 3 -->
+          <div class="sub-rule" id="sr-3">
+            <div class="sub-rule-header" onclick="toggleSubrule('sr-3')">
+              <div class="sub-rule-num" style="background:var(--gray-400)">3</div>
+              <div class="sub-rule-summary">
+                <div class="summary-title">No Tier Set · Any Rating · On Submit → Attribute Map (Country → QA Lead)</div>
+                <div class="summary-meta">Attribute Map strategy · Events: Assessment Submitted, CAPA Submitted</div>
+              </div>
+              <div class="sub-rule-actions">
+                <button class="icon-btn" onclick="event.stopPropagation()">↑</button>
+                <button class="icon-btn" onclick="event.stopPropagation()">↓</button>
+                <button class="icon-btn danger" onclick="event.stopPropagation();removeSubrule('sr-3')">🗑</button>
+              </div>
+              <span class="chevron">▾</span>
+            </div>
+            <div class="sub-rule-body">
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">⚡</span> Trigger Events <span class="req">*</span></div>
+                <div class="check-group">
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>New Assessment</label>
+                  <label class="check-item checked" onclick="toggleCheck(this)"><input type="checkbox" checked/><span class="check-dot">✓</span>Assessment Submitted</label>
+                  <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>Assessment Completed</label>
+                  <label class="check-item checked" onclick="toggleCheck(this)"><input type="checkbox" checked/><span class="check-dot">✓</span>CAPA Submitted</label>
+                </div>
+              </div>
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">📋</span> Assessment Attributes</div>
+                <div class="form-row">
+                  <div class="form-group"><label>Assessment Rating <span class="hint">(leave empty = all)</span></label><div class="tag-input-wrap" onclick="this.querySelector('input').focus()"><input class="tag-input" placeholder="Leave empty to match all ratings…" onkeydown="addTag(event,this)"/></div></div>
+                  <div class="form-group"><label>Rating Label <span class="hint">(optional)</span></label><select><option value="">All rating labels</option><option>Approval</option></select></div>
+                </div>
+              </div>
+              <div class="sr-section">
+                <div class="sr-section-label"><span class="sr-section-icon">🏢</span> Org Attributes (Condition)</div>
+                <div class="form-row">
+                  <div class="form-group half"><label>Attribute</label><select><option selected>Organization Tier</option></select></div>
+                  <div class="form-group half"><label>Operator</label><div class="toggle-group"><button class="toggle-btn" onclick="toggleBtn(this)">Equals</button><button class="toggle-btn active" onclick="toggleBtn(this)">Is not set</button><button class="toggle-btn" onclick="toggleBtn(this)">Always</button></div></div>
+                </div>
+              </div>
+              <div class="sr-section" style="margin-bottom:0">
+                <div class="sr-section-label"><span class="sr-section-icon">🎯</span> Assignment Strategy</div>
+                <div class="strategy-grid">
+                  <div class="strategy-card" onclick="selectStrategy(this,'direct','sr-3')"><div class="check"></div><div class="strat-icon">🎯</div><div class="strat-title">Direct Assign</div><div class="strat-desc">Assign one specific user, role, or group.</div></div>
+                  <div class="strategy-card" onclick="selectStrategy(this,'org','sr-3')"><div class="check"></div><div class="strat-icon">🗺️</div><div class="strat-title">Org Mapping</div><div class="strat-desc">Use the imported rule-level factory mapping.</div></div>
+                  <div class="strategy-card selected" onclick="selectStrategy(this,'attr','sr-3')"><div class="check">✓</div><div class="strat-icon">🔑</div><div class="strat-title">Attribute Map</div><div class="strat-desc">Map each attribute value to an assignee.</div></div>
+                </div>
+                <div id="strategy-content-sr-3" style="margin-top:12px">
+                  <div class="form-group" style="margin-bottom:12px"><label>Map by Attribute</label><select><option selected>Organization Country</option><option>Organization Tier</option></select></div>
+                  <div class="section-label">Value → Assignee</div>
+                  <div class="attr-map-row"><input type="text" value="Vietnam" style="max-width:140px"/><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Minh Tran</option></select><button class="icon-btn danger">🗑</button></div>
+                  <div class="attr-map-row"><input type="text" value="Cambodia" style="max-width:140px"/><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Sothavy Keo</option></select><button class="icon-btn danger">🗑</button></div>
+                  <div class="attr-map-row"><input type="text" value="India" style="max-width:140px"/><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Meghna Rathore</option></select><button class="icon-btn danger">🗑</button></div>
+                  <div class="attr-map-row"><input type="text" value="Thailand" style="max-width:140px"/><span class="attr-map-arrow">→</span><select style="max-width:200px"><option selected>Anna Le</option></select><button class="icon-btn danger">🗑</button></div>
+                  <button class="add-row-btn">+ Add country mapping</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
+        <button class="add-row-btn" style="margin-top:12px" onclick="addSubrule()">+ Add sub-rule</button>
+      </div>
 
-        <!-- Fallback -->
-        <div class="card" style="margin-top:0;border-top:none;border-radius:0 0 var(--radius) var(--radius);border-top:2px dashed var(--gray-300);background:var(--gray-50)">
-          <div class="card-title" style="font-size:13.5px">🛡️ Fallback User <span class="badge badge-warning" style="margin-left:6px">Recommended</span></div>
-          <div class="card-subtitle">If no sub-rule matches, assign to this person as a last resort.</div>
-          <div class="form-group half">
-            <label>Fallback Assignee</label>
-            <select><option>None (leave unassigned)</option><option selected>Sarah Chen (QA Manager, Global)</option><option>Role: Admin</option></select>
-          </div>
+      <!-- Fallback -->
+      <div class="card" style="border-top:2px dashed var(--gray-300);background:var(--gray-50)">
+        <div class="card-title" style="font-size:13.5px">🛡️ Fallback User <span class="badge badge-warning" style="margin-left:6px">Recommended</span></div>
+        <div class="card-subtitle">If no sub-rule matches, assign to this person as a last resort.</div>
+        <div class="form-group half">
+          <label>Fallback Assignee</label>
+          <select><option>None (leave unassigned)</option><option selected>Sarah Chen (QA Manager, Global)</option><option>Role: Admin</option></select>
         </div>
       </div>
 
-      <!-- Single rule section (hidden by default) -->
-      <div id="single-section" style="display:none">
-        <div class="card">
-          <div class="card-title">📐 Condition</div>
-          <div class="form-row">
-            <div class="form-group half">
-              <label>Attribute</label>
-              <select><option>Organization Country</option><option>Organization Tier</option><option>Always (no condition)</option></select>
-            </div>
-            <div class="form-group half">
-              <label>Value</label>
-              <input type="text" placeholder="e.g. Vietnam" />
-            </div>
-          </div>
-          <hr class="card-divider" />
-          <div class="section-label">Assignment Strategy</div>
-          <div class="strategy-grid">
-            <div class="strategy-card selected"><div class="check">✓</div><div class="strat-icon">🎯</div><div class="strat-title">Direct Assign</div><div class="strat-desc">Assign to one specific user or role.</div></div>
-            <div class="strategy-card"><div class="check"></div><div class="strat-icon">🗺️</div><div class="strat-title">Org Mapping</div><div class="strat-desc">Factory-by-factory Excel lookup.</div></div>
-            <div class="strategy-card"><div class="check"></div><div class="strat-icon">🔑</div><div class="strat-title">Attribute Map</div><div class="strat-desc">Map attribute values to assignees.</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Simulate panel -->
+      <!-- Simulate -->
       <div class="simulate-panel">
         <h3>🧪 Test This Rule <span style="font-size:12px;font-weight:400;color:var(--gray-500)">— simulate before saving</span></h3>
         <div class="form-row">
@@ -815,10 +840,9 @@
             <select id="sim-factory">
               <option>Select a factory…</option>
               <option>Win Sheng Garment Co. (Tier 1 · VN)</option>
-              <option>Ningbo Brother Apparel Co. (Tier 1 · CN)</option>
-              <option>Dhaka Garments Ltd. (Tier 1 · BD)</option>
               <option selected>Saigon Weave Industries (Tier 2 · VN)</option>
               <option>Phnom Penh Apparel (No tier · KH)</option>
+              <option>Dhaka Garments Ltd. (Tier 1 · BD — unassigned)</option>
             </select>
           </div>
           <div class="form-group">
@@ -830,20 +854,15 @@
               <option>Approved</option>
             </select>
           </div>
-          <div style="display:flex;align-items:flex-end;padding-bottom:0">
-            <button class="btn btn-primary" onclick="simulate()">▶ Run Simulation</button>
+          <div class="form-group">
+            <label>Trigger Event</label>
+            <select id="sim-event"><option selected>Assessment Submitted</option><option>CAPA Submitted</option><option>New Assessment</option></select>
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary" onclick="simulate()">▶ Run</button>
           </div>
         </div>
-        <div class="simulate-result" id="sim-result">
-          <div class="result-title">✅ Rule would fire — Sub-rule 2 matched</div>
-          <div class="result-body">
-            <strong>Factory:</strong> Saigon Weave Industries &nbsp;·&nbsp; <strong>Tier:</strong> Tier 2 &nbsp;·&nbsp; <strong>Rating:</strong> Probation<br/>
-            <strong>Matched condition:</strong> Tier = Tier 2 (Sub-rule 2)<br/>
-            <strong>Strategy:</strong> Direct Assign<br/>
-            <strong>Would assign to:</strong> David Park (QA Lead, APAC)<br/>
-            <span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes were made.</span>
-          </div>
-        </div>
+        <div class="simulate-result" id="sim-result"></div>
       </div>
 
       <div class="footer-actions">
@@ -855,39 +874,34 @@
       </div>
     </div>
 
-    <!-- ═══════════════════════════════ STEP 3 ═══════════════════════════════ -->
+    <!-- ══════════════ STEP 3 ══════════════ -->
     <div id="page-3" style="display:none">
-
       <div class="card">
         <div class="card-title">📋 Rule Summary</div>
-        <div class="card-subtitle">Review everything before activating. Once active, the rule will fire on all matching trigger events.</div>
-
+        <div class="card-subtitle">Review everything before activating.</div>
         <div class="review-row"><div class="review-label">Rule Name</div><div class="review-val" style="font-weight:600">Remediation Assignment — Performance Elevation</div></div>
         <div class="review-row"><div class="review-label">Status</div><div class="review-val"><span class="badge badge-active">● Active</span></div></div>
-        <div class="review-row"><div class="review-label">Trigger Event</div><div class="review-val">Assessment Submitted</div></div>
         <div class="review-row"><div class="review-label">Workflow</div><div class="review-val">Audit Workflow</div></div>
         <div class="review-row"><div class="review-label">Standard</div><div class="review-val">Performance Elevation</div></div>
-        <div class="review-row"><div class="review-label">Rating Filter</div><div class="review-val"><span class="tag" style="display:inline-flex;margin-right:4px">Needs Improvement</span><span class="tag" style="display:inline-flex;margin-right:4px">Probation</span><span class="tag" style="display:inline-flex">Immediate Resolution</span></div></div>
+        <div class="review-row"><div class="review-label">Org Mapping</div><div class="review-val">12 rows imported (1 unassigned ⚠️)</div></div>
         <div class="review-row"><div class="review-label">Rule Type</div><div class="review-val">Rule Set (3 sub-rules)</div></div>
         <div class="review-row"><div class="review-label">Fallback User</div><div class="review-val">Sarah Chen (QA Manager, Global)</div></div>
-
-        <hr class="card-divider" />
-
+        <hr class="card-divider"/>
         <div class="section-label">Sub-rules</div>
         <div style="display:flex;flex-direction:column;gap:8px">
           <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50)">
             <div class="sub-rule-num">1</div>
-            <div style="flex:1"><div style="font-weight:600;font-size:13px">Tier = Tier 1</div><div style="font-size:12px;color:var(--gray-500)">Org Mapping · 12 rows (1 unassigned ⚠️)</div></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:13px">Tier = Tier 1</div><div style="font-size:12px;color:var(--gray-500)">Rating: Needs Improvement / Probation / Immediate Resolution · Events: Asm Submitted, CAPA Submitted · Org Mapping</div></div>
             <button class="btn btn-ghost btn-sm" onclick="goTo(2)">Edit</button>
           </div>
           <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50)">
             <div class="sub-rule-num">2</div>
-            <div style="flex:1"><div style="font-weight:600;font-size:13px">Tier = Tier 2</div><div style="font-size:12px;color:var(--gray-500)">Direct Assign → David Park</div></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:13px">Tier = Tier 2</div><div style="font-size:12px;color:var(--gray-500)">All ratings · Events: Asm Submitted · Direct Assign → David Park</div></div>
             <button class="btn btn-ghost btn-sm" onclick="goTo(2)">Edit</button>
           </div>
           <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50)">
             <div class="sub-rule-num" style="background:var(--gray-400)">3</div>
-            <div style="flex:1"><div style="font-weight:600;font-size:13px">Tier is not set</div><div style="font-size:12px;color:var(--gray-500)">Attribute Map (Country → QA Lead) · 4 countries mapped</div></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:13px">Tier is not set</div><div style="font-size:12px;color:var(--gray-500)">All ratings · Events: Asm Submitted, CAPA Submitted · Attribute Map (Country → QA Lead, 4 countries)</div></div>
             <button class="btn btn-ghost btn-sm" onclick="goTo(2)">Edit</button>
           </div>
         </div>
@@ -895,69 +909,55 @@
 
       <div class="warning-banner">
         <span>⚠️</span>
-        <div><strong>1 factory in Sub-rule 1 has no assignee.</strong> When this rule fires for that factory, it will fall through to the Fallback User (Sarah Chen). <a href="#" style="color:var(--warning);font-weight:600" onclick="goTo(2);return false">Go back and fix →</a></div>
+        <div><strong>1 factory has no assignee.</strong> It will fall to the Fallback User (Sarah Chen). <a href="#" onclick="goTo(2);return false" style="color:var(--warning);font-weight:600">Fix →</a></div>
       </div>
 
       <div class="card">
         <div class="card-title">🔍 Impact Preview</div>
-        <div class="card-subtitle">Estimated scope based on current active assessments and historical data.</div>
+        <div class="card-subtitle">Estimated scope based on active assessments.</div>
         <div class="form-row triple" style="margin-bottom:0">
-          <div style="text-align:center;padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius)">
-            <div style="font-size:28px;font-weight:700;color:var(--brand)">247</div>
-            <div style="font-size:12.5px;color:var(--gray-500);margin-top:4px">Assessments matching<br/>trigger + rating filter</div>
-          </div>
-          <div style="text-align:center;padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius)">
-            <div style="font-size:28px;font-weight:700;color:var(--success)">94%</div>
-            <div style="font-size:12.5px;color:var(--gray-500);margin-top:4px">Would be auto-assigned<br/>by this rule</div>
-          </div>
-          <div style="text-align:center;padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius)">
-            <div style="font-size:28px;font-weight:700;color:var(--warning)">15</div>
-            <div style="font-size:12.5px;color:var(--gray-500);margin-top:4px">Would fall to<br/>Fallback User</div>
-          </div>
+          <div style="text-align:center;padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius)"><div style="font-size:28px;font-weight:700;color:var(--brand)">247</div><div style="font-size:12.5px;color:var(--gray-500);margin-top:4px">Assessments in scope<br/>(matching workflow + standard)</div></div>
+          <div style="text-align:center;padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius)"><div style="font-size:28px;font-weight:700;color:var(--success)">94%</div><div style="font-size:12.5px;color:var(--gray-500);margin-top:4px">Would be auto-assigned<br/>by this rule</div></div>
+          <div style="text-align:center;padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius)"><div style="font-size:28px;font-weight:700;color:var(--warning)">15</div><div style="font-size:12.5px;color:var(--gray-500);margin-top:4px">Would fall to<br/>Fallback User</div></div>
         </div>
-        <div class="info-banner" style="margin-top:16px;margin-bottom:0">
-          <span>ℹ️</span>
-          <div>This rule will only fire on <strong>new events going forward</strong>. It will not retroactively reassign existing assessments.</div>
-        </div>
+        <div class="info-banner" style="margin-top:16px;margin-bottom:0"><span>ℹ️</span><div>This rule fires on <strong>new events going forward only</strong>. Existing assessments will not be retroactively reassigned.</div></div>
       </div>
 
       <div class="footer-actions">
-        <div class="left">
-          <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
-          <button class="btn btn-danger-outline">Discard</button>
-        </div>
+        <div class="left"><button class="btn btn-secondary" onclick="goTo(2)">← Back</button><button class="btn btn-danger-outline">Discard</button></div>
         <div class="right">
-          <button class="btn btn-secondary" onclick="saveDraft()">Save as Draft (Inactive)</button>
-          <button class="btn btn-primary" onclick="activate()" style="gap:8px">⚡ Activate Rule</button>
+          <button class="btn btn-secondary" onclick="alert('Saved as Draft')">Save as Draft</button>
+          <button class="btn btn-primary" onclick="activate()">⚡ Activate Rule</button>
         </div>
       </div>
     </div>
 
-    <!-- ═══════════════════════════════ SUCCESS ═══════════════════════════════ -->
+    <!-- Success -->
     <div id="page-success" style="display:none;text-align:center;padding:60px 20px">
       <div style="font-size:56px;margin-bottom:16px">✅</div>
       <div style="font-size:22px;font-weight:700;color:var(--gray-900);margin-bottom:8px">Rule Activated!</div>
-      <div style="font-size:15px;color:var(--gray-500);margin-bottom:32px;max-width:420px;margin-left:auto;margin-right:auto">
-        <strong>Remediation Assignment — Performance Elevation</strong> is now active and will automatically assign assessments matching your criteria.
-      </div>
+      <div style="font-size:15px;color:var(--gray-500);margin-bottom:32px;max-width:420px;margin-left:auto;margin-right:auto"><strong>Remediation Assignment — Performance Elevation</strong> is now live.</div>
       <div style="display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-secondary" onclick="resetDemo()">← Back to Rules List</button>
+        <button class="btn btn-secondary" onclick="goTo(1)">← Back to Rules List</button>
         <button class="btn btn-primary" onclick="goTo(3)">View Rule Summary</button>
       </div>
     </div>
 
-    <!-- Upload modal overlay -->
-    <div id="upload-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:var(--radius);padding:28px;max-width:480px;width:90%;box-shadow:var(--shadow-lg)">
+    <!-- Upload modal -->
+    <div id="upload-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:var(--radius);padding:28px;max-width:500px;width:90%;box-shadow:var(--shadow-lg)">
         <div style="font-size:16px;font-weight:700;color:var(--gray-900);margin-bottom:4px">Import Excel Mapping</div>
-        <div style="font-size:13px;color:var(--gray-500);margin-bottom:20px">Upload a spreadsheet of factory → assignee pairs.</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-bottom:16px">Upload a spreadsheet to populate the factory → assignee mapping for this rule. Expected columns: Factory ID, Factory Name, Country, Tier, Product Category, Business Partner, Assessment Rating, Trigger Event, Assignee Email.</div>
         <div class="upload-zone" onclick="triggerUpload()">
           <div class="upload-icon">📂</div>
           <div class="upload-title">Drop your Excel file here</div>
-          <div class="upload-sub">or <span class="upload-link">browse to upload</span> · .xlsx only · max 5MB</div>
+          <div class="upload-sub">or <span class="upload-link">browse to upload</span> · .xlsx only · max 10MB</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px;background:var(--gray-50);border-radius:6px;font-size:12.5px;color:var(--gray-600)">
+          <span>ℹ️</span> Re-importing adds new rows and updates changed ones. Existing rows not in the file are kept.
         </div>
         <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
-          <a href="#" style="font-size:13px;color:var(--brand)">⬇ Download template</a>
+          <a href="#" style="font-size:13px;color:var(--brand)">⬇ Download template (.xlsx)</a>
           <div style="display:flex;gap:8px">
             <button class="btn btn-secondary" onclick="hideUpload()">Cancel</button>
             <button class="btn btn-primary" onclick="hideUpload()">Import</button>
@@ -973,133 +973,110 @@
   let currentPage = 1;
 
   function goTo(page) {
-    [1,2,3].forEach(p => {
-      document.getElementById('page-'+p) && (document.getElementById('page-'+p).style.display = 'none');
-    });
+    [1,2,3].forEach(p => { const el = document.getElementById('page-'+p); if(el) el.style.display='none'; });
     document.getElementById('page-success').style.display = 'none';
-    if (page === 0) { resetDemo(); return; }
     const el = document.getElementById('page-'+page);
     if (el) { el.style.display = 'block'; currentPage = page; }
     updateSteps(page);
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    window.scrollTo({top:0,behavior:'smooth'});
   }
 
   function updateSteps(page) {
     for (let i = 1; i <= 3; i++) {
       const el = document.getElementById('step-indicator-'+i);
+      if (!el) continue;
       el.className = 'step';
-      if (i < page) el.classList.add('done'), el.querySelector('.step-num').textContent = '✓';
-      else if (i === page) el.classList.add('active'), el.querySelector('.step-num').textContent = i;
-      else el.querySelector('.step-num').textContent = i;
+      if (i < page) { el.classList.add('done'); el.querySelector('.step-num').textContent = '✓'; }
+      else if (i === page) { el.classList.add('active'); el.querySelector('.step-num').textContent = i; }
+      else { el.querySelector('.step-num').textContent = i; }
     }
   }
 
-  function setStatus(btn, val) {
+  function toggleBtn(btn) {
     btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
 
-  function selectTrigger(card, val) {
-    document.querySelectorAll('[id^="trig-"]').forEach(c => {
-      c.classList.remove('selected');
-      c.querySelector('.check').textContent = '';
-    });
-    card.classList.add('selected');
-    card.querySelector('.check').textContent = '✓';
-    document.getElementById('result-filter-section').style.display = val === 'submitted' ? 'block' : 'none';
-  }
-
   function selectRuleType(card, type) {
-    document.querySelectorAll('[id^="rt-"]').forEach(c => {
-      c.classList.remove('selected');
-      c.querySelector('.check').textContent = '';
-    });
-    card.classList.add('selected');
-    card.querySelector('.check').textContent = '✓';
-    document.getElementById('ruleset-section').style.display = type === 'ruleset' ? 'block' : 'none';
-    document.getElementById('single-section').style.display = type === 'single' ? 'block' : 'none';
+    document.querySelectorAll('[id^="rt-"]').forEach(c => { c.classList.remove('selected'); c.querySelector('.check').textContent = ''; });
+    card.classList.add('selected'); card.querySelector('.check').textContent = '✓';
   }
 
   function selectStrategy(card, type, srId) {
-    const parent = card.closest('.strategy-grid');
-    parent.querySelectorAll('.strategy-card').forEach(c => {
-      c.classList.remove('selected');
-      c.querySelector('.check').textContent = '';
-    });
-    card.classList.add('selected');
-    card.querySelector('.check').textContent = '✓';
-
+    card.closest('.strategy-grid').querySelectorAll('.strategy-card').forEach(c => { c.classList.remove('selected'); c.querySelector('.check').textContent = ''; });
+    card.classList.add('selected'); card.querySelector('.check').textContent = '✓';
     const content = document.getElementById('strategy-content-'+srId);
     if (!content) return;
     if (type === 'direct') {
-      content.innerHTML = `<div class="form-group"><label>Assign To <span class="req">*</span></label><select><option>Select user, role, or group…</option><option selected>David Park (QA Lead, APAC)</option><option>Sarah Chen (QA Manager)</option><option>Role: Admin</option></select></div>`;
+      content.innerHTML = `<div class="form-group half"><label>Assign To <span class="req">*</span></label><select><option>Select user, role, or group…</option><option selected>David Park (QA Lead, APAC)</option><option>Sarah Chen (QA Manager)</option><option>Role: Admin</option></select></div>`;
     } else if (type === 'org') {
-      content.innerHTML = `<div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn btn-secondary btn-sm" onclick="showUpload()">⬆ Import Excel</button><button class="btn btn-secondary btn-sm">⬇ Export</button><button class="btn btn-secondary btn-sm">+ Add row manually</button></div><div class="empty-state" style="border:1px dashed var(--gray-300);border-radius:var(--radius)"><div class="empty-icon">🗂️</div><div>No mapping rows yet. Import an Excel file or add rows manually.</div></div>`;
+      content.innerHTML = `<div class="info-banner" style="margin-bottom:0"><span>ℹ️</span><div>This sub-rule uses the <strong>Org Mapping table</strong> imported above. Rows matching the conditions defined here will be assigned to their mapped person.</div></div>`;
     } else if (type === 'attr') {
-      content.innerHTML = `<div class="form-group" style="margin-bottom:12px"><label>Map by Attribute</label><select><option selected>Organization Country</option><option>Organization Tier</option></select></div><div class="section-label">Value → Assignee</div><div class="attr-map-row"><input type="text" placeholder="Value (e.g. Vietnam)" style="max-width:140px"/><span class="attr-map-arrow">→</span><select style="max-width:200px"><option>Select assignee…</option></select><button class="icon-btn danger">🗑</button></div><button class="add-row-btn">+ Add mapping</button>`;
+      content.innerHTML = `<div class="form-group" style="margin-bottom:12px"><label>Map by Attribute</label><select><option selected>Organization Country</option><option>Organization Tier</option></select></div><div class="section-label">Value → Assignee</div><div class="attr-map-row"><input type="text" placeholder="e.g. Vietnam" style="max-width:140px"/><span class="attr-map-arrow">→</span><select style="max-width:200px"><option>Select assignee…</option></select><button class="icon-btn danger">🗑</button></div><button class="add-row-btn">+ Add mapping</button>`;
     }
   }
 
-  function toggleSubrule(id) {
-    const el = document.getElementById(id);
-    el.classList.toggle('open');
-  }
+  function toggleSubrule(id) { document.getElementById(id).classList.toggle('open'); }
 
-  function removeSubrule(id) {
-    if (confirm('Remove this sub-rule?')) document.getElementById(id).remove();
+  function removeSubrule(id) { if (confirm('Remove this sub-rule?')) document.getElementById(id).remove(); }
+
+  function toggleCheck(label) {
+    label.classList.toggle('checked');
+    const dot = label.querySelector('.check-dot');
+    dot.textContent = label.classList.contains('checked') ? '✓' : '';
   }
 
   function addSubrule() {
     const list = document.getElementById('subrules-list');
-    const count = list.children.length + 1;
+    const n = list.children.length + 1;
     const div = document.createElement('div');
-    div.className = 'sub-rule';
-    div.id = 'sr-new-'+count;
+    div.className = 'sub-rule'; div.id = 'sr-new-'+n;
     div.innerHTML = `
-      <div class="sub-rule-header" onclick="toggleSubrule('sr-new-${count}')">
-        <div class="sub-rule-num">${count}</div>
-        <div class="sub-rule-summary">
-          <div class="summary-title" style="color:var(--gray-400)">New sub-rule — configure condition and strategy</div>
-          <div class="summary-meta">Not yet configured</div>
-        </div>
-        <div class="sub-rule-actions">
-          <button class="icon-btn">↑</button>
-          <button class="icon-btn">↓</button>
-          <button class="icon-btn danger" onclick="event.stopPropagation();removeSubrule('sr-new-${count}')">🗑</button>
-        </div>
+      <div class="sub-rule-header" onclick="toggleSubrule('sr-new-${n}')">
+        <div class="sub-rule-num">${n}</div>
+        <div class="sub-rule-summary"><div class="summary-title" style="color:var(--gray-400)">New sub-rule — configure below</div><div class="summary-meta">Not yet configured</div></div>
+        <div class="sub-rule-actions"><button class="icon-btn" onclick="event.stopPropagation()">↑</button><button class="icon-btn" onclick="event.stopPropagation()">↓</button><button class="icon-btn danger" onclick="event.stopPropagation();removeSubrule('sr-new-${n}')">🗑</button></div>
         <span class="chevron">▾</span>
       </div>
       <div class="sub-rule-body">
-        <div class="form-row">
-          <div class="form-group half"><label>Condition Attribute</label><select><option>Organization Tier</option><option>Organization Country</option><option>Always (catch-all)</option></select></div>
-          <div class="form-group half"><label>Operator</label><div class="toggle-group"><button class="toggle-btn active">Equals</button><button class="toggle-btn">Is not set</button><button class="toggle-btn">Always</button></div></div>
+        <div class="sr-section">
+          <div class="sr-section-label"><span class="sr-section-icon">⚡</span> Trigger Events <span class="req">*</span></div>
+          <div class="check-group">
+            <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>New Assessment</label>
+            <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>Assessment Submitted</label>
+            <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>Assessment Completed</label>
+            <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"/><span class="check-dot"></span>CAPA Submitted</label>
+          </div>
         </div>
-        <div class="form-row"><div class="form-group half"><label>Value</label><input type="text" placeholder="Enter value…"/></div></div>
-        <hr class="card-divider"/>
-        <div class="section-label">Assignment Strategy</div>
-        <div class="strategy-grid">
-          <div class="strategy-card selected" onclick="selectStrategy(this,'direct','sr-new-${count}')"><div class="check">✓</div><div class="strat-icon">🎯</div><div class="strat-title">Direct Assign</div><div class="strat-desc">Assign to one specific user or role.</div></div>
-          <div class="strategy-card" onclick="selectStrategy(this,'org','sr-new-${count}')"><div class="check"></div><div class="strat-icon">🗺️</div><div class="strat-title">Org Mapping</div><div class="strat-desc">Factory-by-factory Excel lookup.</div></div>
-          <div class="strategy-card" onclick="selectStrategy(this,'attr','sr-new-${count}')"><div class="check"></div><div class="strat-icon">🔑</div><div class="strat-title">Attribute Map</div><div class="strat-desc">Map attribute values to assignees.</div></div>
+        <div class="sr-section">
+          <div class="sr-section-label"><span class="sr-section-icon">📋</span> Assessment Attributes</div>
+          <div class="form-row">
+            <div class="form-group"><label>Assessment Rating <span class="hint">(optional)</span></label><div class="tag-input-wrap" onclick="this.querySelector('input').focus()"><input class="tag-input" placeholder="Leave empty to match all…" onkeydown="addTag(event,this)"/></div></div>
+            <div class="form-group"><label>Rating Label</label><select><option value="">All rating labels</option><option>Approval</option></select></div>
+          </div>
         </div>
-        <div id="strategy-content-sr-new-${count}" style="margin-top:16px">
-          <div class="form-group"><label>Assign To <span class="req">*</span></label><select><option>Select user, role, or group…</option><option>David Park</option><option>Sarah Chen</option></select></div>
+        <div class="sr-section">
+          <div class="sr-section-label"><span class="sr-section-icon">🏢</span> Org Attributes (Condition)</div>
+          <div class="form-row">
+            <div class="form-group half"><label>Attribute</label><select><option>Organization Tier</option><option>Organization Country</option><option>Always (catch-all)</option></select></div>
+            <div class="form-group half"><label>Operator</label><div class="toggle-group"><button class="toggle-btn active" onclick="toggleBtn(this)">Equals</button><button class="toggle-btn" onclick="toggleBtn(this)">Is not set</button><button class="toggle-btn" onclick="toggleBtn(this)">Always</button></div></div>
+          </div>
+          <div class="form-row"><div class="form-group half"><label>Value</label><input type="text" placeholder="Enter value…"/></div></div>
+        </div>
+        <div class="sr-section" style="margin-bottom:0">
+          <div class="sr-section-label"><span class="sr-section-icon">🎯</span> Assignment Strategy</div>
+          <div class="strategy-grid">
+            <div class="strategy-card selected" onclick="selectStrategy(this,'direct','sr-new-${n}')"><div class="check">✓</div><div class="strat-icon">🎯</div><div class="strat-title">Direct Assign</div><div class="strat-desc">Assign one specific user or role.</div></div>
+            <div class="strategy-card" onclick="selectStrategy(this,'org','sr-new-${n}')"><div class="check"></div><div class="strat-icon">🗺️</div><div class="strat-title">Org Mapping</div><div class="strat-desc">Use the imported rule-level mapping.</div></div>
+            <div class="strategy-card" onclick="selectStrategy(this,'attr','sr-new-${n}')"><div class="check"></div><div class="strat-icon">🔑</div><div class="strat-title">Attribute Map</div><div class="strat-desc">Map attribute values to assignees.</div></div>
+          </div>
+          <div id="strategy-content-sr-new-${n}" style="margin-top:12px"><div class="form-group half"><label>Assign To <span class="req">*</span></label><select><option>Select user or role…</option></select></div></div>
         </div>
       </div>`;
     list.appendChild(div);
   }
 
-  function addRow() {
-    alert('➕ In the full product, this would open an inline form to add a new factory → assignee row.');
-  }
-
-  function addAttrRow() {
-    alert('➕ In the full product, this would add a new country → assignee row inline.');
-  }
-
-  function removeTag(btn) {
-    btn.closest('.tag').remove();
-  }
+  function removeTag(btn) { btn.closest('.tag').remove(); }
 
   function addTag(e, input) {
     if (e.key === 'Enter' && input.value.trim()) {
@@ -1111,58 +1088,60 @@
     }
   }
 
-  function toggleOp(btn) {
-    btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-
   function simulate() {
     const result = document.getElementById('sim-result');
     result.classList.add('show');
+    result.style.background = 'var(--success-light)';
+    result.style.borderColor = '#a7f3d0';
     const factory = document.getElementById('sim-factory').value;
     const rating = document.getElementById('sim-rating').value;
+    const event = document.getElementById('sim-event').value;
     let html = '';
     if (factory.includes('Tier 2')) {
-      html = `<div class="result-title">✅ Rule would fire — Sub-rule 2 matched</div><div class="result-body"><strong>Factory:</strong> ${factory.split('(')[0].trim()} &nbsp;·&nbsp; <strong>Rating:</strong> ${rating}<br/><strong>Matched condition:</strong> Tier = Tier 2 (Sub-rule 2)<br/><strong>Strategy:</strong> Direct Assign<br/><strong>Would assign to:</strong> David Park (QA Lead, APAC)<br/><span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes were made.</span></div>`;
+      html = `<div class="result-title">✅ Rule would fire — Sub-rule 2 matched</div><div class="result-body"><strong>Factory:</strong> ${factory.split('(')[0].trim()} · <strong>Rating:</strong> ${rating} · <strong>Event:</strong> ${event}<br/><strong>Matched:</strong> Tier = Tier 2 (Sub-rule 2) · All ratings · ${event}<br/><strong>Strategy:</strong> Direct Assign → <strong>David Park (QA Lead, APAC)</strong><br/><span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes made.</span></div>`;
     } else if (factory.includes('No tier')) {
-      html = `<div class="result-title">✅ Rule would fire — Sub-rule 3 matched</div><div class="result-body"><strong>Factory:</strong> ${factory.split('(')[0].trim()} &nbsp;·&nbsp; <strong>Rating:</strong> ${rating}<br/><strong>Matched condition:</strong> Tier is not set (Sub-rule 3)<br/><strong>Strategy:</strong> Attribute Map → Country = Cambodia<br/><strong>Would assign to:</strong> Sothavy Keo<br/><span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes were made.</span></div>`;
+      html = `<div class="result-title">✅ Rule would fire — Sub-rule 3 matched</div><div class="result-body"><strong>Factory:</strong> ${factory.split('(')[0].trim()} · <strong>Rating:</strong> ${rating} · <strong>Event:</strong> ${event}<br/><strong>Matched:</strong> Tier is not set (Sub-rule 3) · Country = Cambodia<br/><strong>Strategy:</strong> Attribute Map → <strong>Sothavy Keo</strong><br/><span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes made.</span></div>`;
+    } else if (factory.includes('unassigned')) {
+      html = `<div class="result-title" style="color:var(--warning)">⚠️ Sub-rule 1 matched — but factory has no assignee in Org Mapping</div><div class="result-body"><strong>Factory:</strong> Dhaka Garments Ltd. · Tier 1<br/>Sub-rule 1 matched (Tier = Tier 1, Rating: ${rating}), but this factory has no assignee in the mapping table.<br/><strong>Falls to Fallback User:</strong> Sarah Chen (QA Manager, Global)<br/><a href="#" style="font-size:12px;color:var(--warning);font-weight:600">Fix the missing assignee →</a></div>`;
+      result.style.background = 'var(--warning-light)'; result.style.borderColor = '#fcd34d';
     } else if (factory.includes('Tier 1')) {
-      html = `<div class="result-title">✅ Rule would fire — Sub-rule 1 matched</div><div class="result-body"><strong>Factory:</strong> ${factory.split('(')[0].trim()} &nbsp;·&nbsp; <strong>Rating:</strong> ${rating}<br/><strong>Matched condition:</strong> Tier = Tier 1 (Sub-rule 1)<br/><strong>Strategy:</strong> Org Mapping<br/><strong>Would assign to:</strong> Minh Tran<br/><span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes were made.</span></div>`;
+      html = `<div class="result-title">✅ Rule would fire — Sub-rule 1 matched</div><div class="result-body"><strong>Factory:</strong> ${factory.split('(')[0].trim()} · <strong>Rating:</strong> ${rating} · <strong>Event:</strong> ${event}<br/><strong>Matched:</strong> Tier = Tier 1 (Sub-rule 1) · Rating in filter · ${event}<br/><strong>Strategy:</strong> Org Mapping → <strong>Minh Tran (QA Lead, APAC)</strong><br/><span style="font-size:12px;color:var(--gray-500);margin-top:4px;display:block">No actual changes made.</span></div>`;
     } else {
-      html = `<div class="result-title" style="color:var(--warning)">⚠️ No rule matched — would fall to Fallback User</div><div class="result-body"><strong>Factory:</strong> ${factory} &nbsp;·&nbsp; <strong>Rating:</strong> ${rating}<br/>No sub-rule condition matched this factory.<br/><strong>Fallback assignee:</strong> Sarah Chen (QA Manager, Global)</div>`;
-      result.style.background = 'var(--warning-light)';
-      result.style.borderColor = '#fcd34d';
+      html = `<div class="result-title" style="color:var(--warning)">⚠️ No sub-rule matched — falls to Fallback User</div><div class="result-body">No conditions matched this scenario.<br/><strong>Fallback:</strong> Sarah Chen (QA Manager, Global)</div>`;
+      result.style.background = 'var(--warning-light)'; result.style.borderColor = '#fcd34d';
     }
     result.innerHTML = html;
   }
 
-  function showUpload() {
-    document.getElementById('upload-modal').style.display = 'flex';
-  }
-  function hideUpload() {
-    document.getElementById('upload-modal').style.display = 'none';
-  }
-  function triggerUpload() {
-    hideUpload();
-    alert('📂 In the full product, this would parse and preview the uploaded Excel file before importing.');
+  function toggleColPanel() {
+    document.getElementById('col-panel').classList.toggle('open');
   }
 
-  function saveDraft() {
-    alert('💾 Rule saved as Draft (Inactive). It will not fire until you activate it.');
+  function toggleCol(colClass, cb) {
+    document.querySelectorAll('[data-col="'+colClass+'"]').forEach(el => {
+      el.style.display = cb.checked ? '' : 'none';
+    });
+    document.getElementById('col-panel').classList.remove('open');
   }
+
+  function showUpload() { document.getElementById('upload-modal').style.display = 'flex'; }
+  function hideUpload() { document.getElementById('upload-modal').style.display = 'none'; }
+  function triggerUpload() { hideUpload(); alert('📂 In the full product, this would parse and preview the Excel file before importing.'); }
 
   function activate() {
-    [1,2,3].forEach(p => document.getElementById('page-'+p).style.display = 'none');
+    [1,2,3].forEach(p => { const el = document.getElementById('page-'+p); if(el) el.style.display='none'; });
     document.getElementById('page-success').style.display = 'block';
     updateSteps(4);
     window.scrollTo({top:0,behavior:'smooth'});
   }
 
-  function resetDemo() {
-    goTo(1);
-  }
+  document.addEventListener('click', function(e) {
+    const panel = document.getElementById('col-panel');
+    if (panel && panel.classList.contains('open') && !e.target.closest('.col-toggle-wrap') && !e.target.closest('.btn')) {
+      panel.classList.remove('open');
+    }
+  });
 
-  // init
   goTo(1);
 </script>
 </body>
