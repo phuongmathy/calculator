@@ -165,16 +165,26 @@
     table.mapping tr:hover td { background:#fafbff; }
     table.mapping tr.selected-row td { background:var(--brand-light); }
 
-    .col-factory { min-width:180px; }
+    .col-factory { min-width:185px; }
+    .col-workflow { min-width:140px; }
+    .col-rating-label { min-width:130px; }
+    .col-scheme { min-width:120px; }
+    .col-custom { min-width:140px; }
     .col-country { min-width:110px; }
     .col-tier { min-width:90px; }
     .col-category { min-width:130px; }
-    .col-bp { min-width:150px; }
-    .col-rating { min-width:160px; }
+    .col-bp { min-width:155px; }
+    .col-site-status { min-width:110px; }
+    .col-rating { min-width:170px; }
     .col-events { min-width:170px; }
-    .col-assignee { min-width:160px; }
+    .col-assignee { min-width:170px; }
     .col-updated { min-width:110px; }
     .col-actions { min-width:80px; text-align:right; }
+
+    .col-group-header { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:4px 12px; border-bottom:1px solid var(--gray-200); }
+    .col-group-assess { background:#f0f4ff; color:var(--brand); }
+    .col-group-org { background:#f0fdf4; color:var(--success); }
+    .col-group-assign { background:#fdf4ff; color:var(--purple); }
 
     .factory-name { font-weight:600; color:var(--gray-800); }
     .factory-id { font-size:11px; color:var(--gray-400); margin-top:1px; font-family:monospace; }
@@ -275,6 +285,8 @@
     .col-toggle-title { font-size:11.5px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
     .col-toggle-item { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:13px; color:var(--gray-700); cursor:pointer; }
     .col-toggle-item input[type="checkbox"] { accent-color:var(--brand); width:14px; height:14px; cursor:pointer; }
+    .col-group-divider { height:1px; background:var(--gray-100); margin:6px 0; }
+    .col-toggle-group-label { font-size:10px; font-weight:700; color:var(--gray-400); text-transform:uppercase; letter-spacing:.5px; padding:4px 0 2px; }
 
     @media (max-width:700px) {
       .strategy-grid { grid-template-columns:1fr; }
@@ -422,12 +434,22 @@
               <div class="col-toggle-wrap">
                 <div class="col-toggle-panel" id="col-panel">
                   <div class="col-toggle-title">Show / Hide Columns</div>
+                  <div class="col-toggle-group-label" style="color:var(--brand)">📋 Assessment Attributes</div>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-workflow',this)"> Workflow</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-rating-label',this)"> Rating Label</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-scheme',this)"> Scheme Name</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-custom',this)"> Custom Fields</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-rating',this)"> Assessment Rating</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-events',this)"> Trigger Events</label>
+                  <div class="col-group-divider"></div>
+                  <div class="col-toggle-group-label" style="color:var(--success)">🏢 Org Attributes</div>
                   <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-country',this)"> Country</label>
                   <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-tier',this)"> Tier</label>
                   <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-category',this)"> Product Category</label>
                   <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-bp',this)"> Business Partner</label>
-                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-rating',this)"> Assessment Rating</label>
-                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-events',this)"> Trigger Events</label>
+                  <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-site-status',this)"> Site Status</label>
+                  <div class="col-group-divider"></div>
+                  <div class="col-toggle-group-label" style="color:var(--purple)">👤 Assignment</div>
                   <label class="col-toggle-item"><input type="checkbox" checked onchange="toggleCol('col-updated',this)"> Last Updated</label>
                 </div>
               </div>
@@ -437,15 +459,33 @@
           <div class="table-scroll">
             <table class="mapping" id="mapping-table">
               <thead>
+                <!-- Group header row -->
+                <tr>
+                  <th style="width:32px;border-bottom:none"></th>
+                  <th style="border-bottom:none"></th>
+                  <th colspan="6" class="col-group-header col-group-assess" data-col-group="assess">📋 Assessment Attributes</th>
+                  <th colspan="5" class="col-group-header col-group-org" data-col-group="org">🏢 Org Attributes</th>
+                  <th colspan="2" class="col-group-header col-group-assign" data-col-group="assign">👤 Assignment</th>
+                  <th style="border-bottom:none"></th>
+                </tr>
+                <!-- Column header row -->
                 <tr>
                   <th style="width:32px"><input type="checkbox" style="accent-color:var(--brand)" /></th>
                   <th class="col-factory sortable">Factory <span class="sort-icon">↕</span></th>
+                  <!-- Assessment Attributes -->
+                  <th class="col-workflow sortable" data-col="col-workflow">Workflow <span class="sort-icon">↕</span></th>
+                  <th class="col-rating-label" data-col="col-rating-label">Rating Label</th>
+                  <th class="col-scheme" data-col="col-scheme">Scheme</th>
+                  <th class="col-custom" data-col="col-custom">Custom Fields</th>
+                  <th class="col-rating" data-col="col-rating">Assessment Rating</th>
+                  <th class="col-events" data-col="col-events">Trigger Events</th>
+                  <!-- Org Attributes -->
                   <th class="col-country sortable" data-col="col-country">Country <span class="sort-icon">↕</span></th>
                   <th class="col-tier sortable" data-col="col-tier">Tier <span class="sort-icon">↕</span></th>
                   <th class="col-category" data-col="col-category">Product Category</th>
                   <th class="col-bp" data-col="col-bp">Business Partner</th>
-                  <th class="col-rating" data-col="col-rating">Assessment Rating</th>
-                  <th class="col-events" data-col="col-events">Trigger Events</th>
+                  <th class="col-site-status" data-col="col-site-status">Site Status</th>
+                  <!-- Assignment -->
                   <th class="col-assignee sortable">Assignee <span class="sort-icon">↕</span></th>
                   <th class="col-updated" data-col="col-updated">Last Updated</th>
                   <th class="col-actions"></th>
@@ -456,12 +496,17 @@
                 <tr>
                   <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
                   <td class="col-factory"><div class="factory-name">Win Sheng Garment Co.</div><div class="factory-id">#405999</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-blue">Audit Workflow</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><span class="mini-tag mini-tag-orange">Approval</span></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">SMETA 2P</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-purple">Escalation = Yes</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-orange">Probation</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
                   <td class="col-country" data-col="col-country"><span class="flag">🇻🇳</span><span class="country-name">Vietnam</span></td>
                   <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
                   <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Apparel</span></td>
                   <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target APAC</span></div></td>
-                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-orange">Probation</span></div></td>
-                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-green">Active</span></td>
                   <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#1a56db">MT</div><div><div class="assignee-name">Minh Tran</div><div class="assignee-role">QA Lead, APAC</div></div></div></td>
                   <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 10, 2026</div></td>
                   <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
@@ -470,12 +515,17 @@
                 <tr>
                   <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
                   <td class="col-factory"><div class="factory-name">Ningbo Brother Apparel Co.</div><div class="factory-id">#16794883</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-blue">Audit Workflow</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><span class="mini-tag mini-tag-orange">Approval</span></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">BSCI</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-gray">—</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
                   <td class="col-country" data-col="col-country"><span class="flag">🇨🇳</span><span class="country-name">China</span></td>
                   <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
                   <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Apparel</span></td>
                   <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target CN</span><span class="mini-tag mini-tag-purple">Target APAC</span></div></td>
-                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
-                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-green">Active</span></td>
                   <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#7c3aed">SK</div><div><div class="assignee-name">Sothavy Keo</div><div class="assignee-role">QA Manager, CN</div></div></div></td>
                   <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 10, 2026</div></td>
                   <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
@@ -484,12 +534,17 @@
                 <tr>
                   <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
                   <td class="col-factory"><div class="factory-name">Hanoi Textile Manufacturing</div><div class="factory-id">#20113456</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-blue">Audit Workflow</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><div class="multi-tags"><span class="mini-tag mini-tag-orange">Approval</span><span class="mini-tag mini-tag-blue">Compliance</span></div></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">SMETA 4P</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-purple">Priority = High</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-orange">Probation</span><span class="more-tag" title="Immediate Resolution">+1</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
                   <td class="col-country" data-col="col-country"><span class="flag">🇻🇳</span><span class="country-name">Vietnam</span></td>
                   <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
                   <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Textiles</span></td>
                   <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target APAC</span></div></td>
-                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-orange">Probation</span><span class="more-tag">+1</span></div></td>
-                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-green">Active</span></td>
                   <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#0e9f6e">AL</div><div><div class="assignee-name">Anna Le</div><div class="assignee-role">QA Lead, VN</div></div></div></td>
                   <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 8, 2026</div></td>
                   <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
@@ -498,26 +553,36 @@
                 <tr>
                   <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
                   <td class="col-factory"><div class="factory-name">Saigon Weave Industries</div><div class="factory-id">#29884412</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Audit Workflow</span><span class="mini-tag mini-tag-gray">Approval</span></div></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><span class="mini-tag mini-tag-blue">Compliance</span></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">SA8000</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-gray">—</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-orange">Probation</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
                   <td class="col-country" data-col="col-country"><span class="flag">🇻🇳</span><span class="country-name">Vietnam</span></td>
                   <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-gray">Tier 2</span></td>
                   <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Textiles</span></td>
                   <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Vendor VN-3</span></div></td>
-                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-orange">Probation</span></div></td>
-                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-green">Active</span></td>
                   <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#c27803">DP</div><div><div class="assignee-name">David Park</div><div class="assignee-role">QA Lead, APAC</div></div></div></td>
                   <td class="col-updated" data-col="col-updated"><div class="updated-date">Mar 28, 2026</div></td>
                   <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
                 </tr>
-                <!-- Row 5 — unassigned warning -->
+                <!-- Row 5 — unassigned -->
                 <tr>
                   <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
                   <td class="col-factory"><div class="factory-name">Dhaka Garments Ltd.</div><div class="factory-id">#33210987</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-blue">Audit Workflow</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><span class="mini-tag mini-tag-orange">Approval</span></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">WRAP</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-purple">Escalation = Yes</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
                   <td class="col-country" data-col="col-country"><span class="flag">🇧🇩</span><span class="country-name">Bangladesh</span></td>
                   <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
                   <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Apparel</span></td>
                   <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target BD</span></div></td>
-                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
-                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-orange">Under Review</span></td>
                   <td class="col-assignee">
                     <div style="display:inline-flex;align-items:center;gap:6px;color:var(--danger);font-size:13px;font-weight:500">
                       <span>⚠️</span> Unassigned
@@ -531,14 +596,57 @@
                 <tr>
                   <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
                   <td class="col-factory"><div class="factory-name">Phnom Penh Apparel</div><div class="factory-id">#40021378</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-gray">Social Compliance</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><span class="mini-tag mini-tag-blue">Compliance</span></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">SMETA 2P</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-gray">—</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
                   <td class="col-country" data-col="col-country"><span class="flag">🇰🇭</span><span class="country-name">Cambodia</span></td>
                   <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-gray" style="background:#f0fdf4;color:#166534">No Tier</span></td>
                   <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Footwear</span></td>
                   <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Vendor KH-1</span></div></td>
-                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span></div></td>
-                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-green">Active</span></td>
                   <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#0e9f6e">SK</div><div><div class="assignee-name">Sothavy Keo</div><div class="assignee-role">QA Manager, KH</div></div></div></td>
                   <td class="col-updated" data-col="col-updated"><div class="updated-date">Mar 20, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 7 -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Mumbai Fabrics Ltd.</div><div class="factory-id">#51209834</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-blue">Audit Workflow</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><div class="multi-tags"><span class="mini-tag mini-tag-orange">Approval</span><span class="mini-tag mini-tag-blue">Compliance</span></div></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">SA8000</span></td>
+                  <td class="col-custom" data-col="col-custom"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Priority = High</span><span class="mini-tag mini-tag-gray">Region = South Asia</span></div></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-red">Needs Improvement</span><span class="mini-tag mini-tag-red">Immediate Resolution</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-blue">Asm Submitted</span><span class="mini-tag mini-tag-green">CAPA Submitted</span></div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇮🇳</span><span class="country-name">India</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-blue">Tier 1</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Textiles</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Target IN</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag mini-tag-green">Active</span></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#e11d48">MR</div><div><div class="assignee-name">Meghna Rathore</div><div class="assignee-role">QA Lead, IN</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Apr 5, 2026</div></td>
+                  <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
+                </tr>
+                <!-- Row 8 — Inactive site -->
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)" /></td>
+                  <td class="col-factory"><div class="factory-name">Bangkok Thread Co.</div><div class="factory-id">#62310045</div></td>
+                  <td class="col-workflow" data-col="col-workflow"><span class="mini-tag mini-tag-gray">Approval Workflow</span></td>
+                  <td class="col-rating-label" data-col="col-rating-label"><span class="mini-tag mini-tag-orange">Approval</span></td>
+                  <td class="col-scheme" data-col="col-scheme"><span class="mini-tag mini-tag-gray">BSCI</span></td>
+                  <td class="col-custom" data-col="col-custom"><span class="mini-tag mini-tag-gray">—</span></td>
+                  <td class="col-rating" data-col="col-rating"><div class="multi-tags"><span class="mini-tag mini-tag-orange">Probation</span></div></td>
+                  <td class="col-events" data-col="col-events"><div class="multi-tags"><span class="mini-tag mini-tag-gray">New Asm</span><span class="mini-tag mini-tag-blue">Asm Submitted</span></div></td>
+                  <td class="col-country" data-col="col-country"><span class="flag">🇹🇭</span><span class="country-name">Thailand</span></td>
+                  <td class="col-tier" data-col="col-tier"><span class="mini-tag mini-tag-gray">Tier 2</span></td>
+                  <td class="col-category" data-col="col-category"><span class="mini-tag mini-tag-gray">Accessories</span></td>
+                  <td class="col-bp" data-col="col-bp"><div class="multi-tags"><span class="mini-tag mini-tag-purple">Vendor TH-2</span></div></td>
+                  <td class="col-site-status" data-col="col-site-status"><span class="mini-tag" style="background:var(--gray-100);color:var(--gray-500)">Inactive</span></td>
+                  <td class="col-assignee"><div class="assignee-chip"><div class="avatar" style="background:#0e9f6e">AL</div><div><div class="assignee-name">Anna Le</div><div class="assignee-role">QA Lead, VN</div></div></div></td>
+                  <td class="col-updated" data-col="col-updated"><div class="updated-date">Feb 14, 2026</div></td>
                   <td class="col-actions"><div class="row-actions"><button class="icon-btn">✏️</button><button class="icon-btn danger">🗑</button></div></td>
                 </tr>
               </tbody>
@@ -1121,6 +1229,10 @@
     document.querySelectorAll('[data-col="'+colClass+'"]').forEach(el => {
       el.style.display = cb.checked ? '' : 'none';
     });
+    // also hide the corresponding th (no data-col, use class)
+    document.querySelectorAll('th.'+colClass).forEach(el => {
+      el.style.display = cb.checked ? '' : 'none';
+    });
     document.getElementById('col-panel').classList.remove('open');
   }
 
@@ -1142,7 +1254,7 @@
     }
   });
 
-  goTo(1);
+  goTo(2);
 </script>
 </body>
 </html>
