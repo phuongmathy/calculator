@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Auto-Assign Rules — Inspectorio Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pri:#4f46e5;--pri-h:#4338ca;--pri-l:#e0e7ff;--pri-50:#eef2ff;
+  --red:#ef4444;--red-h:#dc2626;--red-l:#fef2f2;
+  --grn:#10b981;--grn-l:#d1fae5;
+  --warn:#f59e0b;--warn-l:#fef3c7;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
+  --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;
+  --g800:#1f2937;--g900:#111827;
+  --r-sm:6px;--r-md:8px;--r-lg:12px;
+  --sh-sm:0 1px 2px rgba(0,0,0,.05);
+  --sh-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g50);color:var(--g900);line-height:1.6;-webkit-font-smoothing:antialiased}
+button{cursor:pointer;border:none;font-family:inherit;font-size:inherit;transition:all .15s ease}
+input,select,textarea{font-family:inherit;font-size:.875rem;border:1px solid var(--g300);border-radius:var(--r-sm);padding:8px 12px;outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;color:var(--g900)}
+input:focus,select:focus,textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 8px center;background-repeat:no-repeat;background-size:16px;padding-right:32px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);font-weight:500;font-size:.875rem;line-height:1.4;white-space:nowrap}
+.btn-p{background:var(--pri);color:#fff}.btn-p:hover{background:var(--pri-h)}.btn-p:disabled{background:var(--g300);cursor:not-allowed}
+.btn-s{background:#fff;color:var(--g700);border:1px solid var(--g300)}.btn-s:hover{background:var(--g50);border-color:var(--g400)}
+.btn-d{background:var(--red);color:#fff}.btn-d:hover{background:var(--red-h)}
+.btn-g{background:transparent;color:var(--g600);padding:6px 10px}.btn-g:hover{background:var(--g100);color:var(--g900)}
+.btn-sm{padding:4px 10px;font-size:.8125rem}
+.btn-i{padding:6px;border-radius:var(--r-sm);display:inline-flex;align-items:center;justify-content:center}
+.card{background:#fff;border:1px solid var(--g200);border-radius:var(--r-lg);box-shadow:var(--sh-sm)}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:.75rem;font-weight:500}
+.b-p{background:var(--pri-l);color:var(--pri)}.b-s{background:var(--grn-l);color:#065f46}
+.b-w{background:var(--warn-l);color:#92400e}.b-d{background:var(--red-l);color:var(--red)}
+.b-g{background:var(--g100);color:var(--g600)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s ease forwards}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.slide-in{animation:slideIn .25s ease forwards}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" data-type="module">
+const {useState,useReducer,useCallback,createContext,useContext,useRef,useEffect,Fragment}=React;
+
+/* ── Data ────────────────────────────────────────────── */
+const ORG_ATTRS=[
+  {key:'country',label:'Country',options:['Vietnam','China','Bangladesh','India','Cambodia','Indonesia','Thailand','Myanmar','Pakistan','Sri Lanka','Turkey','Mexico','Brazil','Canada','United States','Italy','Portugal','Ethiopia','Kenya','South Africa']},
+  {key:'tier',label:'Tier',options:['Tier 1','Tier 2','Tier 3']},
+  {key:'region',label:'Region',options:['Asia Pacific','Europe','North America','South America','Africa','Middle East']},
+  {key:'factoryStatus',label:'Factory Status',options:['Active','Inactive','Suspended','Pending']},
+  {key:'businessPartner',label:'Associated Business Partner',options:['Partner A','Partner B','Partner C','Partner D','Partner E']},
+  {key:'productCategory',label:'Product Category',options:['Apparel','Footwear','Accessories','Home Textiles','Electronics','Food & Beverage','Toys','Furniture']},
+];
+const ASS_ATTRS=[
+  {key:'scheme',label:'Third-Party Scheme',options:['SLCP','Better Work','SMETA','BSCI','WRAP','SA8000','ISO 9001','ISO 14001','OEKO-TEX']},
+  {key:'rating',label:'Assessment Rating',options:['Acceptable','Needs Improvement','Probation','Immediate Resolution','Not Rated']},
+  {key:'status',label:'Assessment Status',options:['Created','In Progress','Submitted','Completed','Cancelled']},
+  {key:'auditType',label:'Audit Type',options:['Social Compliance','Quality','Environmental','Safety','Structural','C-TPAT']},
+  {key:'standard',label:'Standard',options:['APPROVAL - SVP/EVP & GC','APPROVAL - Regional','REMEDIATION','INITIAL AUDIT','FOLLOW-UP']},
+];
+const ALL_ATTRS=[...ORG_ATTRS.map(a=>({...a,cat:'org'})),...ASS_ATTRS.map(a=>({...a,cat:'ass'}))];
+const TRIGGERS=[
+  {key:'assessment_created',label:'Assessment Created'},
+  {key:'assessment_completed',label:'Assessment Completed'},
+  {key:'assessment_submitted',label:'Assessment Submitted'},
+  {key:'capa_submitted',label:'CAPA Submitted'},
+];
+const USERS=[
+  {id:'u1',name:'Ka Ho Yan',role:'Compliance Manager'},
+  {id:'u2',name:'Liza Lam',role:'SVP Compliance'},
+  {id:'u3',name:'John Smith',role:'Regional QA Manager'},
+  {id:'u4',name:'Sarah Chen',role:'Performance Manager'},
+  {id:'u5',name:'David Kim',role:'BI Manager'},
+  {id:'u6',name:'Maria Garcia',role:'Lead Auditor'},
+  {id:'u7',name:'Ahmed Hassan',role:'Social Compliance Lead'},
+  {id:'u8',name:'Emily Watson',role:'Sustainability Manager'},
+];
+const GROUPS=[
+  {id:'g1',name:'Asian QA Group',memberCount:5},
+  {id:'g2',name:'Global Compliance Team',memberCount:8},
+  {id:'g3',name:'RSSC Team',memberCount:4},
+  {id:'g4',name:'Performance Elevation Team',memberCount:6},
+  {id:'g5',name:'Remediation Team',memberCount:3},
+];
+
+let _uid=0;const uid=()=>'id_'+(++_uid)+'_'+Math.random().toString(36).slice(2,8);
+
+/* ── Context ─────────────────────────────────────────── */
+const Ctx=createContext();
+const mkCond=()=>({id:uid(),attributeKey:'',attributeCategory:'',operator:'equals',values:[]});
+const mkSub=()=>({id:uid(),name:'',conditions:[mkCond()]});
+const mkRule=()=>({id:uid(),name:'',description:'',triggerEvent:'',isEnabled:true,subRules:[mkSub()],assignments:{},fallbackAssignees:[]});
+
+function reducer(s,a){
+  const cr=s.currentRule;
+  switch(a.type){
+    case 'SET_STEP':return{...s,currentStep:a.v};
+    case 'SET_FIELD':return{...s,currentRule:{...cr,[a.f]:a.v}};
+    case 'ADD_SUB':return{...s,currentRule:{...cr,subRules:[...cr.subRules,mkSub()]}};
+    case 'RM_SUB':return{...s,currentRule:{...cr,subRules:cr.subRules.filter(x=>x.id!==a.v)}};
+    case 'UP_SUB':return{...s,currentRule:{...cr,subRules:cr.subRules.map(x=>x.id===a.sid?{...x,...a.u}:x)}};
+    case 'ADD_COND':return{...s,currentRule:{...cr,subRules:cr.subRules.map(x=>x.id===a.sid?{...x,conditions:[...x.conditions,mkCond()]}:x)}};
+    case 'RM_COND':return{...s,currentRule:{...cr,subRules:cr.subRules.map(x=>x.id===a.sid?{...x,conditions:x.conditions.filter(c=>c.id!==a.cid)}:x)}};
+    case 'UP_COND':return{...s,currentRule:{...cr,subRules:cr.subRules.map(x=>x.id===a.sid?{...x,conditions:x.conditions.map(c=>c.id===a.cid?{...c,...a.u}:c)}:x)}};
+    case 'SET_ASSIGN':return{...s,currentRule:{...cr,assignments:{...cr.assignments,[a.sid]:a.v}}};
+    case 'SET_FB':return{...s,currentRule:{...cr,fallbackAssignees:a.v}};
+    case 'SAVE':{
+      const rule={...cr,updatedAt:new Date().toISOString()};
+      let nr;
+      if(s.isEditing){nr=s.savedRules.map(r=>r.id===s.editingRuleId?rule:r)}
+      else{rule.createdAt=new Date().toISOString();nr=[...s.savedRules,rule]}
+      localStorage.setItem('autoAssignRules',JSON.stringify(nr));
+      return{...s,savedRules:nr,currentRule:mkRule(),currentStep:0,isEditing:false,editingRuleId:null};
+    }
+    case 'EDIT':{const r=s.savedRules.find(x=>x.id===a.v);if(!r)return s;return{...s,currentRule:{...r},currentStep:0,isEditing:true,editingRuleId:a.v}}
+    case 'DEL':{const nr=s.savedRules.filter(x=>x.id!==a.v);localStorage.setItem('autoAssignRules',JSON.stringify(nr));return{...s,savedRules:nr}}
+    case 'TOG':{const nr=s.savedRules.map(x=>x.id===a.v?{...x,isEnabled:!x.isEnabled}:x);localStorage.setItem('autoAssignRules',JSON.stringify(nr));return{...s,savedRules:nr}}
+    case 'RESET':return{...s,currentRule:mkRule(),currentStep:0,isEditing:false,editingRuleId:null};
+    default:return s;
+  }
+}
+function Provider({children}){
+  const[state,dispatch]=useReducer(reducer,{currentRule:mkRule(),currentStep:0,savedRules:JSON.parse(localStorage.getItem('autoAssignRules')||'[]'),isEditing:false,editingRuleId:null});
+  const v={state,dispatch};
+  return React.createElement(Ctx.Provider,{value:v},children);
+}
+function useR(){return useContext(Ctx)}
+
+/* ── Helpers ─────────────────────────────────────────── */
+const Icon=({d,w=16,s='currentColor',sw=2})=>React.createElement('svg',{width:w,height:w,fill:'none',stroke:s,strokeWidth:sw,viewBox:'0 0 24 24'},React.createElement('path',{d,strokeLinecap:'round',strokeLinejoin:'round'}));
+const validSubs=(rule)=>rule.subRules.filter(sr=>sr.conditions.some(c=>c.attributeKey&&c.values.length>0));
+
+/* ── MultiSelect ─────────────────────────────────────── */
+function MultiSelect({options,selected,onChange,placeholder}){
+  const[open,setOpen]=useState(false);
+  const[search,setSearch]=useState('');
+  const ref=useRef(null);
+  useEffect(()=>{const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false)};document.addEventListener('mousedown',h);return()=>document.removeEventListener('mousedown',h)},[]);
+  const filtered=options.filter(o=>o.toLowerCase().includes(search.toLowerCase())&&!selected.includes(o));
+  return(
+    <div ref={ref} style={{position:'relative'}}>
+      <div onClick={()=>setOpen(!open)} style={{minHeight:38,border:'1px solid var(--g300)',borderRadius:'var(--r-sm)',padding:'4px 8px',display:'flex',flexWrap:'wrap',gap:4,alignItems:'center',cursor:'pointer',background:'#fff'}}>
+        {selected.length===0&&<span style={{color:'var(--g400)',fontSize:'.875rem'}}>{placeholder||'Select values...'}</span>}
+        {selected.map(v=><span key={v} className="badge b-p" style={{gap:4}}>{v}<button onClick={e=>{e.stopPropagation();onChange(selected.filter(s=>s!==v))}} style={{background:'none',border:'none',padding:0,fontSize:'.875rem',color:'var(--pri)',cursor:'pointer',lineHeight:1}}>×</button></span>)}
+      </div>
+      {open&&<div style={{position:'absolute',top:'100%',left:0,right:0,background:'#fff',border:'1px solid var(--g200)',borderRadius:'var(--r-sm)',boxShadow:'var(--sh-lg)',zIndex:50,maxHeight:200,overflow:'auto',marginTop:4}}>
+        <div style={{padding:'6px 8px',borderBottom:'1px solid var(--g100)'}}><input type="text" placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onClick={e=>e.stopPropagation()} style={{width:'100%',border:'1px solid var(--g200)',fontSize:'.8125rem'}} autoFocus/></div>
+        {filtered.map(o=><div key={o} onClick={e=>{e.stopPropagation();onChange([...selected,o]);setSearch('')}} style={{padding:'8px 12px',cursor:'pointer',fontSize:'.875rem'}} onMouseEnter={e=>e.target.style.background='var(--pri-50)'} onMouseLeave={e=>e.target.style.background='transparent'}>{o}</div>)}
+        {filtered.length===0&&<div style={{padding:12,color:'var(--g400)',fontSize:'.875rem',textAlign:'center'}}>No options</div>}
+      </div>}
+    </div>
+  );
+}
+
+/* ── AssigneePicker ──────────────────────────────────── */
+function AssigneePicker({selected,onChange,label}){
+  const[open,setOpen]=useState(false);
+  const[search,setSearch]=useState('');
+  const[tab,setTab]=useState('users');
+  const ref=useRef(null);
+  useEffect(()=>{const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false)};document.addEventListener('mousedown',h);return()=>document.removeEventListener('mousedown',h)},[]);
+  const cur=selected||[];
+  const fu=USERS.filter(u=>u.name.toLowerCase().includes(search.toLowerCase())&&!cur.some(a=>a.id===u.id));
+  const fg=GROUPS.filter(g=>g.name.toLowerCase().includes(search.toLowerCase())&&!cur.some(a=>a.id===g.id));
+  const add=(item,type)=>{onChange([...cur,{...item,type}]);setSearch('')};
+  const rm=id=>onChange(cur.filter(a=>a.id!==id));
+  return(
+    <div ref={ref} style={{position:'relative'}}>
+      <div onClick={()=>setOpen(true)} style={{minHeight:38,border:'1px solid var(--g300)',borderRadius:'var(--r-sm)',padding:'4px 8px',display:'flex',flexWrap:'wrap',gap:4,alignItems:'center',cursor:'pointer',background:'#fff'}}>
+        {cur.length===0&&<span style={{color:'var(--g400)',fontSize:'.8125rem'}}>{label||'Assign users or groups...'}</span>}
+        {cur.map(a=><span key={a.id} className={`badge ${a.type==='group'?'b-w':'b-s'}`} style={{gap:4}}>
+          {a.type==='group'&&<Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={12}/>}{a.name}
+          <button onClick={e=>{e.stopPropagation();rm(a.id)}} style={{background:'none',border:'none',padding:0,cursor:'pointer',lineHeight:1,fontSize:'.875rem',color:'inherit'}}>×</button>
+        </span>)}
+      </div>
+      {open&&<div style={{position:'absolute',top:'100%',left:0,right:0,background:'#fff',border:'1px solid var(--g200)',borderRadius:'var(--r-sm)',boxShadow:'var(--sh-lg)',zIndex:50,marginTop:4,overflow:'hidden'}}>
+        <div style={{padding:8,borderBottom:'1px solid var(--g100)'}}><input type="text" placeholder="Search users or groups..." value={search} onChange={e=>setSearch(e.target.value)} style={{width:'100%',border:'1px solid var(--g200)',fontSize:'.8125rem'}} autoFocus/></div>
+        <div style={{display:'flex',borderBottom:'1px solid var(--g100)'}}>
+          {['users','groups'].map(t=><button key={t} onClick={()=>setTab(t)} style={{flex:1,padding:8,fontSize:'.8125rem',fontWeight:500,background:tab===t?'var(--pri-50)':'transparent',color:tab===t?'var(--pri)':'var(--g500)',borderBottom:tab===t?'2px solid var(--pri)':'2px solid transparent'}}>{t==='users'?`Users (${fu.length})`:`Groups (${fg.length})`}</button>)}
+        </div>
+        <div style={{maxHeight:200,overflow:'auto'}}>
+          {tab==='users'&&fu.map(u=><div key={u.id} onClick={()=>add(u,'user')} style={{padding:'8px 12px',cursor:'pointer',display:'flex',alignItems:'center',gap:10}} onMouseEnter={e=>e.currentTarget.style.background='var(--g50)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{width:28,height:28,borderRadius:'50%',background:'var(--pri-l)',color:'var(--pri)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'.75rem',fontWeight:600,flexShrink:0}}>{u.name.split(' ').map(n=>n[0]).join('')}</div>
+            <div><div style={{fontSize:'.8125rem',fontWeight:500}}>{u.name}</div><div style={{fontSize:'.75rem',color:'var(--g400)'}}>{u.role}</div></div>
+          </div>)}
+          {tab==='groups'&&fg.map(g=><div key={g.id} onClick={()=>add(g,'group')} style={{padding:'8px 12px',cursor:'pointer',display:'flex',alignItems:'center',gap:10}} onMouseEnter={e=>e.currentTarget.style.background='var(--g50)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{width:28,height:28,borderRadius:'50%',background:'var(--warn-l)',color:'#92400e',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={14}/></div>
+            <div><div style={{fontSize:'.8125rem',fontWeight:500}}>{g.name}</div><div style={{fontSize:'.75rem',color:'var(--g400)'}}>{g.memberCount} members</div></div>
+          </div>)}
+          {((tab==='users'&&fu.length===0)||(tab==='groups'&&fg.length===0))&&<div style={{padding:16,textAlign:'center',color:'var(--g400)',fontSize:'.8125rem'}}>No results</div>}
+        </div>
+      </div>}
+    </div>
+  );
+}
+
+/* ── Step 1: Sub-Rules ─────────────────────────────── */
+function ConditionRow({cond,sid,isOnly}){
+  const{dispatch}=useR();
+  const attr=ALL_ATTRS.find(a=>a.key===cond.attributeKey);
+  const up=(u)=>dispatch({type:'UP_COND',sid,cid:cond.id,u});
+  return(
+    <div className="fade-in" style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+      <div style={{minWidth:140}}>
+        <select value={cond.attributeKey} onChange={e=>{const s=ALL_ATTRS.find(a=>a.key===e.target.value);up({attributeKey:e.target.value,attributeCategory:s?.cat||'',values:[]})}} style={{width:'100%'}}>
+          <option value="">Select attribute</option>
+          <optgroup label="Organization Attributes">{ORG_ATTRS.map(a=><option key={a.key} value={a.key}>{a.label}</option>)}</optgroup>
+          <optgroup label="Assessment Attributes">{ASS_ATTRS.map(a=><option key={a.key} value={a.key}>{a.label}</option>)}</optgroup>
+        </select>
+      </div>
+      <div style={{minWidth:100}}>
+        <select value={cond.operator} onChange={e=>up({operator:e.target.value})} style={{width:'100%'}}>
+          <option value="equals">equals</option><option value="not_equals">not equals</option><option value="contains">contains</option>
+        </select>
+      </div>
+      <div style={{flex:1,minWidth:200}}>
+        {attr?<MultiSelect options={attr.options} selected={cond.values} onChange={v=>up({values:v})} placeholder={`Select ${attr.label}...`}/>:
+        <input type="text" placeholder="Select an attribute first" disabled style={{width:'100%',background:'var(--g50)'}}/>}
+      </div>
+      <button className="btn btn-i btn-g" onClick={()=>dispatch({type:'RM_COND',sid,cid:cond.id})} disabled={isOnly} style={{opacity:isOnly?.3:1,flexShrink:0,marginTop:2}} title="Remove condition">
+        <Icon d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </button>
+    </div>
+  );
+}
+
+function SubRuleCard({sub,idx,isOnly}){
+  const{dispatch}=useR();
+  return(
+    <div className="card fade-in" style={{padding:0,overflow:'hidden'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 20px',background:'var(--g50)',borderBottom:'1px solid var(--g200)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <span className="badge b-p" style={{fontWeight:600,fontSize:'.8125rem'}}>Sub-rule {idx+1}</span>
+          <input type="text" placeholder="Sub-rule name (optional)" value={sub.name} onChange={e=>dispatch({type:'UP_SUB',sid:sub.id,u:{name:e.target.value}})} style={{border:'none',background:'transparent',fontWeight:500,fontSize:'.875rem',width:220,padding:'4px 8px'}}/>
+        </div>
+        <button className="btn btn-g btn-sm" onClick={()=>dispatch({type:'RM_SUB',v:sub.id})} disabled={isOnly} style={{color:isOnly?'var(--g300)':'var(--red)',opacity:isOnly?.5:1}}>
+          <Icon d="M6 18L18 6M6 6l12 12" w={14}/> Remove
+        </button>
+      </div>
+      <div style={{padding:'16px 20px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+          <span style={{fontSize:'.75rem',fontWeight:600,color:'var(--g500)',textTransform:'uppercase',letterSpacing:'.05em'}}>Conditions</span>
+          <span style={{fontSize:'.7rem',color:'var(--g400)'}}>(all conditions must match — AND logic)</span>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {sub.conditions.map((c,i)=><Fragment key={c.id}>
+            <ConditionRow cond={c} sid={sub.id} isOnly={sub.conditions.length===1}/>
+            {i<sub.conditions.length-1&&<div style={{display:'flex',alignItems:'center',gap:10,padding:'0 0 0 4px'}}>
+              <span className="badge b-w" style={{fontSize:'.7rem',fontWeight:700}}>AND</span>
+              <div style={{flex:1,height:1,background:'var(--g200)'}}/>
+            </div>}
+          </Fragment>)}
+        </div>
+        <button className="btn btn-g btn-sm" onClick={()=>dispatch({type:'ADD_COND',sid:sub.id})} style={{marginTop:12,color:'var(--pri)'}}>
+          <Icon d="M12 5v14m-7-7h14" w={14}/> Add AND condition
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Step1(){
+  const{state,dispatch}=useR();
+  const cr=state.currentRule;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:24}}>
+      <div className="card" style={{padding:24}}>
+        <h3 style={{fontSize:'1rem',fontWeight:600,marginBottom:16,color:'var(--g800)'}}>General Information</h3>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <div>
+            <label style={{display:'block',fontSize:'.8125rem',fontWeight:500,marginBottom:4,color:'var(--g700)'}}>Rule Name <span style={{color:'var(--red)'}}>*</span></label>
+            <input type="text" placeholder="e.g., Vietnam Tier 1 Assessment Assignment" value={cr.name} onChange={e=>dispatch({type:'SET_FIELD',f:'name',v:e.target.value})} style={{width:'100%'}}/>
+          </div>
+          <div>
+            <label style={{display:'block',fontSize:'.8125rem',fontWeight:500,marginBottom:4,color:'var(--g700)'}}>Trigger Event <span style={{color:'var(--red)'}}>*</span></label>
+            <select value={cr.triggerEvent} onChange={e=>dispatch({type:'SET_FIELD',f:'triggerEvent',v:e.target.value})} style={{width:'100%'}}>
+              <option value="">Select trigger event...</option>
+              {TRIGGERS.map(t=><option key={t.key} value={t.key}>{t.label}</option>)}
+            </select>
+          </div>
+          <div style={{gridColumn:'1/-1'}}>
+            <label style={{display:'block',fontSize:'.8125rem',fontWeight:500,marginBottom:4,color:'var(--g700)'}}>Description</label>
+            <textarea placeholder="Describe when and why this rule should trigger..." value={cr.description} onChange={e=>dispatch({type:'SET_FIELD',f:'description',v:e.target.value})} rows={2} style={{width:'100%',resize:'vertical'}}/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <div>
+            <h3 style={{fontSize:'1rem',fontWeight:600,color:'var(--g800)'}}>Sub-Rules</h3>
+            <p style={{fontSize:'.8125rem',color:'var(--g500)',marginTop:2}}>Sub-rules are evaluated with <span className="badge b-p" style={{fontSize:'.7rem',fontWeight:700,verticalAlign:'middle'}}>OR</span> logic — any matching sub-rule triggers assignment.</p>
+          </div>
+          <button className="btn btn-s btn-sm" onClick={()=>dispatch({type:'ADD_SUB'})}><Icon d="M12 5v14m-7-7h14" w={14}/> Add Sub-Rule</button>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          {cr.subRules.map((sr,i)=><Fragment key={sr.id}>
+            {i>0&&<div style={{display:'flex',alignItems:'center',gap:12,padding:'0 20px'}}>
+              <div style={{flex:1,height:1,background:'var(--g300)',borderStyle:'dashed'}}/>
+              <span className="badge b-p" style={{fontSize:'.75rem',fontWeight:700,padding:'4px 14px'}}>OR</span>
+              <div style={{flex:1,height:1,background:'var(--g300)',borderStyle:'dashed'}}/>
+            </div>}
+            <SubRuleCard sub={sr} idx={i} isOnly={cr.subRules.length===1}/>
+          </Fragment>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Step 2: Assignees ─────────────────────────────── */
+function sumConds(conds){
+  return conds.filter(c=>c.attributeKey&&c.values.length>0).map(c=>{
+    const a=ALL_ATTRS.find(x=>x.key===c.attributeKey);
+    const op=c.operator==='not_equals'?'≠':c.operator==='contains'?'∋':'=';
+    return `${a?a.label:c.attributeKey} ${op} ${c.values.join(', ')}`;
+  });
+}
+
+function Step2(){
+  const{state,dispatch}=useR();
+  const cr=state.currentRule;
+  const vs=validSubs(cr);
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:24}}>
+      <div className="card" style={{padding:24}}>
+        <h3 style={{fontSize:'1rem',fontWeight:600,marginBottom:4,color:'var(--g800)'}}>Assign Members per Sub-Rule</h3>
+        <p style={{fontSize:'.8125rem',color:'var(--g500)',marginBottom:20}}>For each sub-rule, specify which users or groups should be auto-assigned when the conditions match.</p>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'.875rem'}}>
+            <thead><tr>
+              {['Sub-Rule','Conditions Summary','Assignees'].map((h,i)=><th key={h} style={{textAlign:'left',padding:'10px 16px',background:'var(--g50)',borderBottom:'2px solid var(--g200)',fontWeight:600,color:'var(--g600)',fontSize:'.8125rem',...(i===2?{minWidth:300}:{})}}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {vs.length===0?<tr><td colSpan={3} style={{padding:'40px 16px',textAlign:'center',color:'var(--g400)',background:'var(--g50)'}}>
+                <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" w={40} s="var(--g300)" sw={1.5}/>
+                <p style={{fontWeight:500,marginTop:12}}>No valid sub-rules yet</p>
+                <p style={{fontSize:'.8125rem',marginTop:4}}>Go back to Step 1 and add conditions with selected values.</p>
+              </td></tr>:vs.map((sr,i)=>{
+                const conds=sumConds(sr.conditions);
+                return <tr key={sr.id} className="slide-in" style={{animationDelay:`${i*60}ms`}}>
+                  <td style={{padding:'14px 16px',borderBottom:'1px solid var(--g100)',verticalAlign:'top',whiteSpace:'nowrap'}}>
+                    <span className="badge b-p" style={{fontWeight:600}}>#{i+1}</span>
+                    {sr.name&&<span style={{marginLeft:8,fontWeight:500,color:'var(--g700)'}}>{sr.name}</span>}
+                  </td>
+                  <td style={{padding:'14px 16px',borderBottom:'1px solid var(--g100)',verticalAlign:'top'}}>
+                    <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                      {conds.map((c,j)=><div key={j} style={{display:'flex',alignItems:'center',gap:6}}>
+                        {j>0&&<span className="badge b-w" style={{fontSize:'.625rem',fontWeight:700}}>AND</span>}
+                        <span style={{fontSize:'.8125rem',color:'var(--g600)'}}>{c}</span>
+                      </div>)}
+                    </div>
+                  </td>
+                  <td style={{padding:'14px 16px',borderBottom:'1px solid var(--g100)',verticalAlign:'top'}}>
+                    <AssigneePicker selected={cr.assignments[sr.id]||[]} onChange={v=>dispatch({type:'SET_ASSIGN',sid:sr.id,v})}/>
+                  </td>
+                </tr>;
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="card" style={{padding:24,borderLeft:'4px solid var(--warn)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+          <Icon d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" w={20} s="var(--warn)"/>
+          <h3 style={{fontSize:'1rem',fontWeight:600,color:'var(--g800)'}}>Fallback Assignment (ELSE)</h3>
+        </div>
+        <p style={{fontSize:'.8125rem',color:'var(--g500)',marginBottom:12}}>If no sub-rule matches, these assignees will be used as a fallback so no assessment is left unassigned.</p>
+        <AssigneePicker selected={cr.fallbackAssignees} onChange={v=>dispatch({type:'SET_FB',v})} label="Select fallback assignees..."/>
+      </div>
+    </div>
+  );
+}
+
+/* ── Step 3: Review ────────────────────────────────── */
+function fmtCond(c){const a=ALL_ATTRS.find(x=>x.key===c.attributeKey);const m={equals:'equals',not_equals:'does not equal',contains:'contains'};return{label:a?a.label:c.attributeKey,op:m[c.operator]||c.operator,values:c.values}}
+function ABadge({a}){const g=a.type==='group';return <span className={`badge ${g?'b-w':'b-s'}`} style={{gap:4}}>{g&&<Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={12}/>}{a.name}</span>}
+function SH({icon,title}){return <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}><div style={{width:32,height:32,borderRadius:'var(--r-sm)',background:'var(--pri-l)',color:'var(--pri)',display:'flex',alignItems:'center',justifyContent:'center'}}>{icon}</div><h3 style={{fontSize:'1rem',fontWeight:600,color:'var(--g800)'}}>{title}</h3></div>}
+
+function Step3(){
+  const{state}=useR();
+  const cr=state.currentRule;
+  const trigger=TRIGGERS.find(t=>t.key===cr.triggerEvent);
+  const vs=validSubs(cr);
+  const hasA=vs.some(sr=>(cr.assignments[sr.id]||[]).length>0);
+  const hasF=cr.fallbackAssignees.length>0;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:20}}>
+      {!hasA&&!hasF&&<div style={{background:'var(--red-l)',border:'1px solid #fecaca',borderRadius:'var(--r-md)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10}}>
+        <Icon d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" s="var(--red)"/>
+        <span style={{fontSize:'.875rem',color:'#991b1b'}}>No assignees configured. Go back to Step 2 to assign users or groups.</span>
+      </div>}
+
+      <div className="card" style={{padding:24}}>
+        <SH icon={<Icon d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>} title="General Information"/>
+        <div style={{display:'grid',gridTemplateColumns:'140px 1fr',gap:'10px 20px',fontSize:'.875rem'}}>
+          <span style={{color:'var(--g500)',fontWeight:500}}>Rule Name</span>
+          <span style={{fontWeight:500}}>{cr.name||'(not set)'}</span>
+          <span style={{color:'var(--g500)',fontWeight:500}}>Trigger Event</span>
+          <span>{trigger?<span className="badge b-p">{trigger.label}</span>:'(not set)'}</span>
+          {cr.description&&<><span style={{color:'var(--g500)',fontWeight:500}}>Description</span><span style={{color:'var(--g600)'}}>{cr.description}</span></>}
+        </div>
+      </div>
+
+      <div className="card" style={{padding:24}}>
+        <SH icon={<Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>} title="Rules & Assignments"/>
+        {vs.length===0?<div style={{padding:24,textAlign:'center',color:'var(--g400)',background:'var(--g50)',borderRadius:'var(--r-md)'}}>No sub-rules with conditions defined.</div>:
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          {vs.map((sr,i)=>{
+            const assignees=cr.assignments[sr.id]||[];
+            const conds=sr.conditions.filter(c=>c.attributeKey&&c.values.length>0);
+            return <div key={sr.id} className="slide-in" style={{border:'1px solid var(--g200)',borderRadius:'var(--r-md)',overflow:'hidden',animationDelay:`${i*80}ms`}}>
+              <div style={{background:'var(--g50)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid var(--g200)'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span className="badge b-p" style={{fontWeight:600}}>Sub-rule {i+1}</span>
+                  {sr.name&&<span style={{fontWeight:500,fontSize:'.875rem'}}>{sr.name}</span>}
+                  {i>0&&<span className="badge b-g" style={{fontSize:'.625rem',fontWeight:700,marginLeft:4}}>OR</span>}
+                </div>
+                {assignees.length>0?<span className="badge b-s" style={{fontSize:'.75rem'}}>{assignees.length} assignee{assignees.length>1?'s':''}</span>:
+                <span className="badge b-d" style={{fontSize:'.75rem'}}>No assignees</span>}
+              </div>
+              <div style={{padding:'14px 16px'}}>
+                <div style={{marginBottom:12}}>
+                  <span style={{fontSize:'.75rem',fontWeight:600,color:'var(--g500)',textTransform:'uppercase',letterSpacing:'.05em'}}>When</span>
+                  <div style={{marginTop:6,display:'flex',flexDirection:'column',gap:6}}>
+                    {conds.map((c,j)=>{const f=fmtCond(c);return <div key={c.id} style={{display:'flex',alignItems:'center',gap:8}}>
+                      {j>0&&<span className="badge b-w" style={{fontSize:'.625rem',fontWeight:700}}>AND</span>}
+                      <span style={{fontSize:'.8125rem'}}><strong>{f.label}</strong> <span style={{color:'var(--g500)'}}>{f.op}</span> {f.values.map((v,k)=><Fragment key={k}>{k>0&&<span style={{color:'var(--g400)'}}>, </span>}<span className="badge b-g" style={{fontSize:'.75rem'}}>{v}</span></Fragment>)}</span>
+                    </div>})}
+                  </div>
+                </div>
+                <div>
+                  <span style={{fontSize:'.75rem',fontWeight:600,color:'var(--g500)',textTransform:'uppercase',letterSpacing:'.05em'}}>Then assign to</span>
+                  <div style={{marginTop:6,display:'flex',flexWrap:'wrap',gap:6}}>
+                    {assignees.length>0?assignees.map(a=><ABadge key={a.id} a={a}/>):<span style={{fontSize:'.8125rem',color:'var(--g400)',fontStyle:'italic'}}>No assignees selected</span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+          })}
+        </div>}
+      </div>
+
+      <div className="card" style={{padding:24,borderLeft:`4px solid ${hasF?'var(--grn)':'var(--warn)'}`}}>
+        <SH icon={<Icon d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>} title="Fallback (ELSE) Assignment"/>
+        <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+          {hasF?cr.fallbackAssignees.map(a=><ABadge key={a.id} a={a}/>):<span style={{fontSize:'.8125rem',color:'var(--g400)',fontStyle:'italic'}}>No fallback assignees — assessments may be left unassigned if no sub-rule matches.</span>}
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
+        {[{n:vs.length,l:'Sub-Rules',c:'var(--pri)'},{n:new Set(vs.flatMap(sr=>(cr.assignments[sr.id]||[]).map(a=>a.id))).size,l:'Unique Assignees',c:'var(--grn)'},{n:vs.reduce((s,sr)=>s+sr.conditions.filter(c=>c.attributeKey&&c.values.length>0).length,0),l:'Total Conditions',c:'var(--warn)'}].map(x=>
+          <div key={x.l} className="card" style={{padding:'16px 20px',textAlign:'center'}}>
+            <div style={{fontSize:'1.75rem',fontWeight:700,color:x.c}}>{x.n}</div>
+            <div style={{fontSize:'.8125rem',color:'var(--g500)'}}>{x.l}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Stepper ───────────────────────────────────────── */
+const STEPS=[{label:'Define Sub-Rules',desc:'Set conditions with OR/AND logic'},{label:'Assign Members',desc:'Map assignees to each sub-rule'},{label:'Review & Submit',desc:'Verify and save your rule'}];
+function Stepper({step,onClick}){
+  return <div style={{display:'flex',alignItems:'center',gap:0,padding:'0 8px'}}>
+    {STEPS.map((s,i)=>{const act=i===step,done=i<step,click=i<=step;return <Fragment key={i}>
+      <button onClick={()=>click&&onClick(i)} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 16px',background:act?'var(--pri-50)':'transparent',border:act?'1px solid var(--pri-l)':'1px solid transparent',borderRadius:'var(--r-md)',cursor:click?'pointer':'default',opacity:!click&&!act?.5:1,transition:'all .15s'}}>
+        <div style={{width:32,height:32,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:600,fontSize:'.875rem',flexShrink:0,background:done?'var(--grn)':act?'var(--pri)':'var(--g200)',color:done||act?'#fff':'var(--g500)',transition:'all .2s'}}>
+          {done?<Icon d="M5 13l4 4L19 7" w={16} s="white" sw={2.5}/>:i+1}
+        </div>
+        <div style={{textAlign:'left'}}>
+          <div style={{fontWeight:600,fontSize:'.8125rem',color:act?'var(--pri)':done?'var(--g700)':'var(--g500)',lineHeight:1.3}}>{s.label}</div>
+          <div style={{fontSize:'.6875rem',color:'var(--g400)',lineHeight:1.3,marginTop:1}}>{s.desc}</div>
+        </div>
+      </button>
+      {i<STEPS.length-1&&<div style={{flex:1,height:2,minWidth:32,background:done?'var(--grn)':'var(--g200)',borderRadius:1,transition:'background .2s'}}/>}
+    </Fragment>})}
+  </div>;
+}
+
+/* ── Wizard ─────────────────────────────────────────── */
+function Wizard({onDone}){
+  const{state,dispatch}=useR();
+  const{currentStep:step,currentRule:cr,isEditing}=state;
+  const[ok,setOk]=useState(false);
+  const canNext=step===0?cr.name.trim()&&cr.triggerEvent:true;
+  const next=()=>step<2&&dispatch({type:'SET_STEP',v:step+1});
+  const back=()=>step>0&&dispatch({type:'SET_STEP',v:step-1});
+  const submit=()=>{dispatch({type:'SAVE'});setOk(true);setTimeout(()=>{setOk(false);onDone()},1800)};
+  const cancel=()=>{dispatch({type:'RESET'});onDone()};
+  if(ok)return <div style={{minHeight:'60vh',display:'flex',alignItems:'center',justifyContent:'center'}}>
+    <div className="fade-in" style={{textAlign:'center'}}>
+      <div style={{width:72,height:72,borderRadius:'50%',background:'var(--grn-l)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px'}}><Icon d="M5 13l4 4L19 7" w={36} s="var(--grn)" sw={2.5}/></div>
+      <h2 style={{fontSize:'1.5rem',fontWeight:700,color:'var(--g800)',marginBottom:8}}>Rule {isEditing?'Updated':'Created'} Successfully!</h2>
+      <p style={{color:'var(--g500)'}}>Redirecting to rule management...</p>
+    </div>
+  </div>;
+
+  const SC=[Step1,Step2,Step3][step];
+  return(
+    <div style={{maxWidth:960,margin:'0 auto',padding:'24px 20px'}}>
+      <div style={{marginBottom:24}}>
+        <button className="btn btn-g btn-sm" onClick={cancel} style={{marginBottom:12,color:'var(--g500)'}}>
+          <Icon d="M19 12H5m7-7l-7 7 7 7"/> Back to Rules
+        </button>
+        <h1 style={{fontSize:'1.5rem',fontWeight:700,color:'var(--g900)'}}>{isEditing?'Edit Auto-Assign Rule':'Create New Auto-Assign Rule'}</h1>
+        <p style={{fontSize:'.875rem',color:'var(--g500)',marginTop:4}}>Configure attribute-based rules to automatically assign members to assessments and CAPAs.</p>
+      </div>
+      <div className="card" style={{padding:16,marginBottom:24}}><Stepper step={step} onClick={s=>s<=step&&dispatch({type:'SET_STEP',v:s})}/></div>
+      <div style={{marginBottom:24}}><SC/></div>
+      <div className="card" style={{padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',bottom:16,zIndex:30}}>
+        <button className="btn btn-s" onClick={cancel}>Cancel</button>
+        <div style={{display:'flex',gap:10}}>
+          {step>0&&<button className="btn btn-s" onClick={back}><Icon d="M19 12H5m7-7l-7 7 7 7" w={14}/> Previous</button>}
+          {step<2?<button className="btn btn-p" onClick={next} disabled={!canNext}>Next Step <Icon d="M5 12h14m-7-7l7 7-7 7" w={14} s="currentColor"/></button>:
+          <button className="btn btn-p" onClick={submit} style={{background:'var(--grn)',gap:8}}><Icon d="M5 13l4 4L19 7" s="currentColor"/> {isEditing?'Update Rule':'Submit Rule'}</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Rule List ─────────────────────────────────────── */
+function ConfirmDlg({title,msg,onOk,onNo}){
+  return <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.4)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100}} onClick={onNo}>
+    <div className="card fade-in" style={{padding:24,maxWidth:400,width:'90%'}} onClick={e=>e.stopPropagation()}>
+      <h3 style={{fontSize:'1rem',fontWeight:600,marginBottom:8}}>{title}</h3>
+      <p style={{fontSize:'.875rem',color:'var(--g600)',marginBottom:20}}>{msg}</p>
+      <div style={{display:'flex',justifyContent:'flex-end',gap:10}}>
+        <button className="btn btn-s" onClick={onNo}>Cancel</button>
+        <button className="btn btn-d" onClick={onOk}>Delete</button>
+      </div>
+    </div>
+  </div>;
+}
+
+function RuleCard({rule,onEdit}){
+  const{dispatch}=useR();
+  const[del,setDel]=useState(false);
+  const trigger=TRIGGERS.find(t=>t.key===rule.triggerEvent);
+  const vs=validSubs(rule);
+  const ta=new Set(vs.flatMap(sr=>(rule.assignments[sr.id]||[]).map(a=>a.id))).size;
+  return <>
+    <div className="card slide-in" style={{padding:0,overflow:'hidden',opacity:rule.isEnabled?1:.65,transition:'opacity .2s'}}>
+      <div style={{padding:'18px 20px'}}>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:12}}>
+          <div style={{flex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+              <h3 style={{fontSize:'1rem',fontWeight:600,color:'var(--g800)'}}>{rule.name}</h3>
+              <span className={`badge ${rule.isEnabled?'b-s':'b-g'}`} style={{fontSize:'.6875rem'}}>{rule.isEnabled?'Active':'Disabled'}</span>
+            </div>
+            {rule.description&&<p style={{fontSize:'.8125rem',color:'var(--g500)',marginBottom:8}}>{rule.description}</p>}
+            <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
+              {trigger&&<span style={{fontSize:'.8125rem',color:'var(--g500)',display:'flex',alignItems:'center',gap:4}}><Icon d="M13 10V3L4 14h7v7l9-11h-7z" w={14}/>{trigger.label}</span>}
+              <span style={{fontSize:'.8125rem',color:'var(--g500)',display:'flex',alignItems:'center',gap:4}}><Icon d="M4 6h16M4 12h16M4 18h7" w={14}/>{vs.length} sub-rule{vs.length!==1?'s':''}</span>
+              <span style={{fontSize:'.8125rem',color:'var(--g500)',display:'flex',alignItems:'center',gap:4}}><Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={14}/>{ta} assignee{ta!==1?'s':''}</span>
+            </div>
+          </div>
+          <div style={{display:'flex',gap:4,flexShrink:0}}>
+            <button className="btn btn-g btn-i" onClick={()=>dispatch({type:'TOG',v:rule.id})} title={rule.isEnabled?'Disable':'Enable'}>
+              {rule.isEnabled?<Icon d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" w={18} s="var(--grn)"/>:<Icon d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" w={18} s="var(--g400)"/>}
+            </button>
+            <button className="btn btn-g btn-i" onClick={()=>{dispatch({type:'EDIT',v:rule.id});onEdit()}} title="Edit"><Icon d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></button>
+            <button className="btn btn-g btn-i" onClick={()=>setDel(true)} title="Delete" style={{color:'var(--red)'}}><Icon d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></button>
+          </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:6,marginTop:10}}>
+          {vs.slice(0,3).map((sr,i)=>{
+            const conds=sr.conditions.filter(c=>c.attributeKey&&c.values.length>0).map(c=>{const a=ALL_ATTRS.find(x=>x.key===c.attributeKey);return `${a?a.label:c.attributeKey}: ${c.values.join(', ')}`});
+            const assignees=rule.assignments[sr.id]||[];
+            return <div key={sr.id} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 10px',background:'var(--g50)',borderRadius:'var(--r-sm)',fontSize:'.8125rem'}}>
+              {i>0&&<span className="badge b-p" style={{fontSize:'.5625rem',fontWeight:700}}>OR</span>}
+              <span style={{color:'var(--g600)',flex:1}}>{conds.join(' & ')||'No conditions'}</span>
+              <Icon d="M14 5l7 7m0 0l-7 7m7-7H3" w={14} s="var(--g400)"/>
+              <span style={{color:'var(--g700)',fontWeight:500}}>{assignees.map(a=>a.name).join(', ')||'No assignees'}</span>
+            </div>;
+          })}
+          {vs.length>3&&<span style={{fontSize:'.75rem',color:'var(--g400)',paddingLeft:10}}>+{vs.length-3} more sub-rule{vs.length-3>1?'s':''}</span>}
+        </div>
+      </div>
+      {rule.createdAt&&<div style={{borderTop:'1px solid var(--g100)',padding:'8px 20px',display:'flex',justifyContent:'space-between',fontSize:'.75rem',color:'var(--g400)'}}>
+        <span>Created {new Date(rule.createdAt).toLocaleDateString()}</span>
+        {rule.updatedAt&&<span>Updated {new Date(rule.updatedAt).toLocaleDateString()}</span>}
+      </div>}
+    </div>
+    {del&&<ConfirmDlg title="Delete Rule" msg={`Are you sure you want to delete "${rule.name}"? This action cannot be undone.`} onOk={()=>{dispatch({type:'DEL',v:rule.id});setDel(false)}} onNo={()=>setDel(false)}/>}
+  </>;
+}
+
+function RuleList({onCreate}){
+  const{state,dispatch}=useR();
+  const{savedRules}=state;
+  const[filter,setFilter]=useState('all');
+  const fr=filter==='all'?savedRules:filter==='active'?savedRules.filter(r=>r.isEnabled):savedRules.filter(r=>!r.isEnabled);
+  const create=()=>{dispatch({type:'RESET'});onCreate()};
+  return(
+    <div style={{maxWidth:960,margin:'0 auto',padding:'32px 20px'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:24}}>
+        <div>
+          <h1 style={{fontSize:'1.5rem',fontWeight:700,color:'var(--g900)'}}>Auto-Assign Rules</h1>
+          <p style={{fontSize:'.875rem',color:'var(--g500)',marginTop:4}}>Manage rule-based auto-assignment for assessments and CAPAs</p>
+        </div>
+        <button className="btn btn-p" onClick={create}><Icon d="M12 5v14m-7-7h14" s="currentColor"/> New Rule</button>
+      </div>
+      <div style={{display:'flex',gap:8,marginBottom:20}}>
+        {['all','active','disabled'].map(f=><button key={f} className={`btn btn-sm ${filter===f?'btn-p':'btn-s'}`} onClick={()=>setFilter(f)}>
+          {f.charAt(0).toUpperCase()+f.slice(1)} ({f==='all'?savedRules.length:f==='active'?savedRules.filter(r=>r.isEnabled).length:savedRules.filter(r=>!r.isEnabled).length})
+        </button>)}
+      </div>
+      {fr.length===0?<div className="card" style={{padding:'64px 24px',textAlign:'center'}}>
+        <div style={{width:64,height:64,borderRadius:'50%',background:'var(--pri-50)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 16px'}}><Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" w={28} s="var(--pri)" sw={1.5}/></div>
+        <h3 style={{fontSize:'1.125rem',fontWeight:600,color:'var(--g800)',marginBottom:8}}>{savedRules.length===0?'No rules yet':'No matching rules'}</h3>
+        <p style={{fontSize:'.875rem',color:'var(--g500)',marginBottom:20}}>{savedRules.length===0?'Create your first auto-assign rule to automatically route assessments to the right team members.':'Try changing the filter to see other rules.'}</p>
+        {savedRules.length===0&&<button className="btn btn-p" onClick={create}><Icon d="M12 5v14m-7-7h14" s="currentColor"/> Create First Rule</button>}
+      </div>:<div style={{display:'flex',flexDirection:'column',gap:12}}>{fr.map(r=><RuleCard key={r.id} rule={r} onEdit={onCreate}/>)}</div>}
+    </div>
+  );
+}
+
+/* ── App Shell ─────────────────────────────────────── */
+function App(){
+  const[page,setPage]=useState('list');
+  return(
+    <Provider>
+      <div style={{minHeight:'100vh',background:'var(--g50)'}}>
+        <header style={{background:'#fff',borderBottom:'1px solid var(--g200)',padding:'0 24px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:40}}>
+          <div style={{display:'flex',alignItems:'center',gap:12}}>
+            <div style={{width:32,height:32,borderRadius:'var(--r-sm)',background:'var(--pri)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" w={18} s="white"/>
+            </div>
+            <span style={{fontWeight:700,fontSize:'1rem',color:'var(--g800)'}}>Inspectorio</span>
+            <span style={{fontSize:'.75rem',color:'var(--g400)',borderLeft:'1px solid var(--g200)',paddingLeft:12,marginLeft:4}}>Auto-Assign Configuration</span>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <div style={{width:32,height:32,borderRadius:'50%',background:'var(--pri-l)',color:'var(--pri)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'.75rem',fontWeight:600}}>BA</div>
+            <span style={{fontSize:'.8125rem',fontWeight:500,color:'var(--g700)'}}>Brand Admin</span>
+          </div>
+        </header>
+        {page==='list'?<RuleList onCreate={()=>setPage('wizard')}/>:<Wizard onDone={()=>setPage('list')}/>}
+      </div>
+    </Provider>
+  );
+}
+
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>
