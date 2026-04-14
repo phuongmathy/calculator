@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Management Page — UI Options</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #1a56db; --brand-light: #ebf0ff; --brand-hover: #1648c0;
+      --success: #0e9f6e; --success-light: #e3faf3;
+      --warning: #c27803; --warning-light: #fff3cd;
+      --danger: #e02424; --danger-light: #fde8e8;
+      --purple: #7c3aed; --purple-light: #ede9fe;
+      --teal: #0891b2; --teal-light: #e0f7fa;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280;
+      --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937; --gray-900: #111827;
+      --radius: 8px; --shadow-sm: 0 1px 3px rgba(0,0,0,.08); --shadow-md: 0 4px 12px rgba(0,0,0,.1); --shadow-lg: 0 8px 24px rgba(0,0,0,.14);
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); color: var(--gray-800); font-size: 14px; line-height: 1.5; }
+
+    /* ── Top nav ── */
+    .topnav { background:#fff; border-bottom:1px solid var(--gray-200); padding:0 24px; height:52px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:100; }
+    .logo { font-weight:700; font-size:16px; color:var(--brand); }
+    .nav-sep { color:var(--gray-300); font-size:18px; }
+    .breadcrumb { color:var(--gray-500); font-size:13px; }
+    .breadcrumb span { color:var(--gray-800); font-weight:500; }
+    .nav-right { margin-left:auto; display:flex; gap:8px; }
+
+    /* ── Option switcher ── */
+    .option-switcher { background:#fff; border-bottom:2px solid var(--gray-200); padding:0 24px; display:flex; align-items:center; gap:0; position:sticky; top:52px; z-index:99; }
+    .opt-tab { padding:14px 20px; font-size:13.5px; font-weight:500; cursor:pointer; color:var(--gray-500); border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; display:flex; align-items:center; gap:8px; }
+    .opt-tab:hover { color:var(--gray-800); }
+    .opt-tab.active { color:var(--brand); border-bottom-color:var(--brand); }
+    .opt-tab .opt-badge { background:var(--gray-100); color:var(--gray-500); font-size:11px; padding:1px 6px; border-radius:10px; font-weight:600; }
+    .opt-tab.active .opt-badge { background:var(--brand-light); color:var(--brand); }
+    .opt-divider { width:1px; height:20px; background:var(--gray-200); margin:0 8px; }
+    .opt-label { font-size:12px; color:var(--gray-400); padding:0 12px; }
+
+    /* ── Layout ── */
+    .layout { display:flex; min-height:calc(100vh - 104px); }
+    .sidebar { width:220px; background:#fff; border-right:1px solid var(--gray-200); padding:20px 0; flex-shrink:0; }
+    .sidebar-section { padding:0 16px 6px; font-size:11px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:.6px; margin-top:14px; }
+    .sidebar-item { display:flex; align-items:center; gap:10px; padding:8px 16px; cursor:pointer; color:var(--gray-600); font-size:13.5px; transition:background .15s; }
+    .sidebar-item:hover { background:var(--gray-50); }
+    .sidebar-item.active { background:var(--brand-light); color:var(--brand); font-weight:500; border-right:3px solid var(--brand); }
+    .main { flex:1; padding:24px 28px; overflow-x:auto; }
+
+    /* ── Shared components ── */
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+    .page-header h1 { font-size:19px; font-weight:700; color:var(--gray-900); }
+    .page-header p { font-size:13px; color:var(--gray-500); margin-top:3px; }
+    .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:6px; font-size:13.5px; font-weight:500; cursor:pointer; border:none; transition:all .15s; font-family:inherit; }
+    .btn-primary { background:var(--brand); color:#fff; }
+    .btn-primary:hover { background:var(--brand-hover); }
+    .btn-secondary { background:#fff; color:var(--gray-700); border:1px solid var(--gray-300); }
+    .btn-secondary:hover { background:var(--gray-50); }
+    .btn-ghost { background:none; color:var(--brand); padding:6px 10px; border:none; cursor:pointer; font-family:inherit; font-size:13px; font-weight:500; border-radius:6px; }
+    .btn-ghost:hover { background:var(--brand-light); }
+    .btn-sm { padding:5px 10px; font-size:12.5px; }
+    .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:12px; font-size:11.5px; font-weight:600; }
+    .badge-active { background:var(--success-light); color:var(--success); }
+    .badge-inactive { background:var(--gray-100); color:var(--gray-500); }
+    .mini-tag { display:inline-flex; align-items:center; padding:2px 7px; border-radius:4px; font-size:11.5px; font-weight:500; white-space:nowrap; }
+    .mt-red { background:var(--danger-light); color:var(--danger); }
+    .mt-orange { background:var(--warning-light); color:var(--warning); }
+    .mt-blue { background:var(--brand-light); color:var(--brand); }
+    .mt-green { background:var(--success-light); color:var(--success); }
+    .mt-purple { background:var(--purple-light); color:var(--purple); }
+    .mt-teal { background:var(--teal-light); color:var(--teal); }
+    .mt-gray { background:var(--gray-100); color:var(--gray-600); }
+    .avatar { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; }
+    .avatar-sm { width:22px; height:22px; font-size:9px; }
+    .multi-tags { display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+    .icon-btn { background:none; border:none; cursor:pointer; color:var(--gray-400); font-size:14px; padding:4px; border-radius:4px; transition:all .15s; }
+    .icon-btn:hover { background:var(--gray-200); color:var(--gray-700); }
+
+    /* ── Filter bar ── */
+    .filter-bar { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; box-shadow:var(--shadow-sm); }
+    .filter-bar .filter-label { font-size:12px; font-weight:600; color:var(--gray-500); white-space:nowrap; }
+    .filter-select { border:1px solid var(--gray-200); border-radius:6px; padding:5px 28px 5px 10px; font-size:12.5px; color:var(--gray-700); cursor:pointer; background:#fff; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; font-family:inherit; transition:border-color .15s; }
+    .filter-select:focus { outline:none; border-color:var(--brand); }
+    .filter-chip { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; border:1.5px solid transparent; }
+    .filter-chip.active { border-color:var(--brand); background:var(--brand-light); color:var(--brand); }
+    .filter-chip:not(.active) { border-color:var(--gray-200); background:#fff; color:var(--gray-600); }
+    .filter-chip:hover:not(.active) { border-color:var(--gray-300); background:var(--gray-50); }
+    .filter-sep { width:1px; height:20px; background:var(--gray-200); }
+    .search-wrap { position:relative; flex:1; min-width:180px; max-width:260px; }
+    .search-wrap input { width:100%; border:1px solid var(--gray-200); border-radius:6px; padding:5px 10px 5px 28px; font-size:12.5px; color:var(--gray-700); outline:none; font-family:inherit; }
+    .search-wrap input:focus { border-color:var(--brand); }
+    .search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--gray-400); font-size:12px; pointer-events:none; }
+    .active-filters { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+    .active-filter-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; background:var(--brand-light); color:var(--brand); border-radius:4px; font-size:12px; font-weight:500; }
+    .active-filter-tag button { background:none; border:none; cursor:pointer; color:var(--brand); font-size:13px; line-height:1; padding:0; opacity:.7; }
+
+    /* ── Stats row ── */
+    .stats-row { display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+    .stat-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); padding:12px 18px; flex:1; min-width:120px; box-shadow:var(--shadow-sm); }
+    .stat-num { font-size:22px; font-weight:700; color:var(--gray-900); }
+    .stat-label { font-size:11.5px; color:var(--gray-500); margin-top:2px; }
+    .stat-card.warn .stat-num { color:var(--danger); }
+
+    /* ── Card ── */
+    .card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; margin-bottom:16px; }
+    .card-header { padding:14px 18px; border-bottom:1px solid var(--gray-100); display:flex; align-items:center; justify-content:space-between; background:var(--gray-50); }
+    .card-title { font-size:14px; font-weight:700; color:var(--gray-800); display:flex; align-items:center; gap:8px; }
+
+    /* ══════════════════════════════════════════════
+       OPTION A — TABBED TABLE
+    ══════════════════════════════════════════════ */
+    .tabs { display:flex; border-bottom:2px solid var(--gray-200); background:#fff; border-radius:var(--radius) var(--radius) 0 0; overflow:hidden; }
+    .tab { padding:11px 18px; font-size:13px; font-weight:500; cursor:pointer; color:var(--gray-500); border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; display:flex; align-items:center; gap:7px; white-space:nowrap; }
+    .tab:hover { color:var(--gray-800); background:var(--gray-50); }
+    .tab.active { color:var(--brand); border-bottom-color:var(--brand); background:#fff; }
+    .tab .tab-count { background:var(--gray-100); color:var(--gray-600); font-size:11px; padding:1px 6px; border-radius:10px; font-weight:600; }
+    .tab.active .tab-count { background:var(--brand-light); color:var(--brand); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    /* Rules table */
+    .rules-table-wrap { overflow-x:auto; }
+    table.rules { width:100%; border-collapse:collapse; min-width:900px; }
+    table.rules th { background:var(--gray-50); padding:9px 14px; font-size:11.5px; font-weight:700; color:var(--gray-600); text-align:left; border-bottom:2px solid var(--gray-200); white-space:nowrap; }
+    table.rules td { padding:11px 14px; font-size:13px; border-bottom:1px solid var(--gray-100); vertical-align:top; }
+    table.rules tr:last-child td { border-bottom:none; }
+    table.rules tr:hover td { background:#fafbff; }
+    .rule-name { font-weight:600; color:var(--gray-900); margin-bottom:3px; }
+    .rule-meta { font-size:11.5px; color:var(--gray-400); }
+    .expand-btn { background:none; border:none; cursor:pointer; color:var(--gray-400); font-size:12px; transition:all .15s; margin-top:4px; display:flex; align-items:center; gap:4px; font-family:inherit; padding:2px 0; }
+    .expand-btn:hover { color:var(--brand); }
+    .attr-expand { display:none; margin-top:10px; padding:10px 12px; background:var(--gray-50); border-radius:6px; border:1px solid var(--gray-200); }
+    .attr-expand.open { display:block; }
+    .attr-row { display:flex; gap:8px; align-items:flex-start; margin-bottom:6px; font-size:12px; }
+    .attr-row:last-child { margin-bottom:0; }
+    .attr-key { width:120px; flex-shrink:0; color:var(--gray-500); font-weight:500; }
+    .attr-vals { display:flex; flex-wrap:wrap; gap:4px; }
+    .row-actions-hover { display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+    tr:hover .row-actions-hover { opacity:1; }
+
+    /* Assignee view */
+    .assignee-card { border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; margin-bottom:12px; }
+    .assignee-header { display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--gray-50); cursor:pointer; border-bottom:1px solid transparent; transition:all .15s; }
+    .assignee-header:hover { background:var(--gray-100); }
+    .assignee-card.open .assignee-header { border-bottom-color:var(--gray-200); background:#fff; }
+    .assignee-info { flex:1; }
+    .assignee-name-main { font-size:14px; font-weight:600; color:var(--gray-900); }
+    .assignee-sub { font-size:12px; color:var(--gray-500); margin-top:2px; }
+    .assignee-stats { display:flex; gap:16px; flex-shrink:0; }
+    .astat { text-align:center; }
+    .astat-num { font-size:16px; font-weight:700; color:var(--gray-800); }
+    .astat-label { font-size:11px; color:var(--gray-400); }
+    .assignee-body { padding:16px 18px; display:none; }
+    .assignee-card.open .assignee-body { display:block; }
+    .chevron { transition:transform .2s; color:var(--gray-400); font-size:12px; }
+    .assignee-card.open .chevron { transform:rotate(180deg); }
+    .assess-attr-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+    .attr-section-title { font-size:11.5px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; margin-top:12px; }
+    .attr-section-title:first-child { margin-top:0; }
+
+    /* ══════════════════════════════════════════════
+       OPTION E — DUAL VIEW TOGGLE
+    ══════════════════════════════════════════════ */
+    .view-toggle { display:flex; background:var(--gray-100); border-radius:8px; padding:3px; gap:2px; }
+    .view-btn { padding:6px 14px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; border:none; background:transparent; color:var(--gray-600); transition:all .15s; font-family:inherit; display:flex; align-items:center; gap:6px; }
+    .view-btn.active { background:#fff; color:var(--gray-900); box-shadow:0 1px 3px rgba(0,0,0,.12); }
+    .view-btn:hover:not(.active) { background:rgba(255,255,255,.6); }
+
+    /* Org-centric table */
+    table.org-table { width:100%; border-collapse:collapse; min-width:1000px; }
+    table.org-table th { background:var(--gray-50); padding:9px 12px; font-size:11px; font-weight:700; color:var(--gray-600); text-align:left; border-bottom:2px solid var(--gray-200); white-space:nowrap; }
+    table.org-table th.group-header { font-size:10px; text-transform:uppercase; letter-spacing:.5px; padding:5px 12px; border-bottom:1px solid var(--gray-200); }
+    table.org-table th.gh-assess { background:#f0f4ff; color:var(--brand); }
+    table.org-table th.gh-org { background:#f0fdf4; color:var(--success); }
+    table.org-table th.gh-assign { background:#fdf4ff; color:var(--purple); }
+    table.org-table td { padding:10px 12px; font-size:12.5px; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+    table.org-table tr:last-child td { border-bottom:none; }
+    table.org-table tr:hover td { background:#fafbff; }
+
+    /* Assignee-centric view */
+    .assignee-view { display:flex; flex-direction:column; gap:12px; }
+    .av-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-sm); }
+    .av-header { display:flex; align-items:center; gap:14px; padding:14px 18px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); }
+    .av-person { flex:1; }
+    .av-name { font-size:14px; font-weight:700; color:var(--gray-900); }
+    .av-role { font-size:12px; color:var(--gray-500); margin-top:2px; }
+    .av-coverage { display:flex; gap:14px; }
+    .av-stat { text-align:right; }
+    .av-stat-num { font-size:15px; font-weight:700; color:var(--gray-800); }
+    .av-stat-label { font-size:11px; color:var(--gray-400); }
+    .av-attr-summary { padding:12px 18px; border-bottom:1px solid var(--gray-100); }
+    .av-attr-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; font-size:12.5px; }
+    .av-attr-row:last-child { margin-bottom:0; }
+    .av-attr-label { width:110px; flex-shrink:0; color:var(--gray-500); font-size:12px; font-weight:500; }
+    .av-table-wrap { overflow-x:auto; }
+    table.av-table { width:100%; border-collapse:collapse; min-width:600px; }
+    table.av-table th { background:var(--gray-50); padding:7px 12px; font-size:11px; font-weight:700; color:var(--gray-500); text-align:left; border-bottom:1px solid var(--gray-200); }
+    table.av-table td { padding:8px 12px; font-size:12.5px; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+    table.av-table tr:last-child td { border-bottom:none; }
+    table.av-table tr:hover td { background:var(--gray-50); }
+
+    /* Detail panel / drawer */
+    .detail-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:200; }
+    .detail-overlay.open { display:flex; justify-content:flex-end; }
+    .detail-panel { width:480px; max-width:95vw; background:#fff; height:100%; overflow-y:auto; box-shadow:var(--shadow-lg); animation:slideIn .2s ease; }
+    @keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
+    .detail-header { padding:18px 20px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#fff; z-index:10; }
+    .detail-title { font-size:15px; font-weight:700; color:var(--gray-900); }
+    .detail-body { padding:20px; }
+    .detail-section { margin-bottom:20px; }
+    .detail-section-title { font-size:11.5px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--gray-100); }
+    .detail-row { display:flex; gap:12px; margin-bottom:8px; }
+    .detail-key { width:130px; flex-shrink:0; font-size:13px; color:var(--gray-500); font-weight:500; }
+    .detail-val { font-size:13px; color:var(--gray-800); display:flex; flex-wrap:wrap; gap:4px; }
+
+    /* Page sections */
+    #optA, #optE { display:none; }
+    #optA.active, #optE.active { display:block; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">Inspectorio</div>
+  <span class="nav-sep">/</span>
+  <span class="breadcrumb">Settings › <span>Auto-Assignment Rules</span></span>
+  <div class="nav-right">
+    <button class="btn btn-secondary btn-sm">⬇ Export</button>
+    <button class="btn btn-primary btn-sm">+ New Rule</button>
+  </div>
+</nav>
+
+<!-- Option switcher -->
+<div class="option-switcher">
+  <span class="opt-label">UI Option:</span>
+  <div class="opt-tab active" onclick="switchOption('A',this)" id="opt-tab-A">
+    Option A <span class="opt-badge">Tabbed Table</span>
+  </div>
+  <div class="opt-tab" onclick="switchOption('E',this)" id="opt-tab-E">
+    Option E <span class="opt-badge">Dual View Toggle</span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Supply Chain</div>
+    <div class="sidebar-item"><span>📋</span> Assessments</div>
+    <div class="sidebar-item"><span>🔧</span> CAPAs</div>
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item"><span>🏢</span> Organizations</div>
+    <div class="sidebar-item"><span>👥</span> Users &amp; Roles</div>
+    <div class="sidebar-item active"><span>⚡</span> Auto-Assignment</div>
+    <div class="sidebar-item"><span>📊</span> Standards</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ══════════════════════════════════════════
+         OPTION A — TABBED TABLE
+    ══════════════════════════════════════════ -->
+    <div id="optA" class="active">
+      <div class="page-header">
+        <div>
+          <h1>Auto-Assignment Rules</h1>
+          <p>Manage all rules that automatically assign team members to assessments and CAPAs.</p>
+        </div>
+        <button class="btn btn-primary">+ New Rule</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">Total Rules</div></div>
+        <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Active Rules</div></div>
+        <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Assignees Covered</div></div>
+        <div class="stat-card warn"><div class="stat-num">3</div><div class="stat-label">Unassigned Orgs</div></div>
+        <div class="stat-card"><div class="stat-num">247</div><div class="stat-label">Assessments in scope</div></div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" placeholder="Search rule, assignee, org…" /></div>
+        <div class="filter-sep"></div>
+        <select class="filter-select" onchange="addFilterChip('Workflow', this)">
+          <option value="">Workflow: All</option>
+          <option>Audit Workflow</option>
+          <option>Approval Workflow</option>
+          <option>Social Compliance</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChip('Rating Label', this)">
+          <option value="">Rating Label: All</option>
+          <option>Approval</option>
+          <option>Compliance</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChip('Assessment Rating', this)">
+          <option value="">Rating: All</option>
+          <option>Needs Improvement</option>
+          <option>Probation</option>
+          <option>Immediate Resolution</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChip('Standard', this)">
+          <option value="">Standard: All</option>
+          <option>Performance Elevation</option>
+          <option>Social Audit (SA8000)</option>
+        </select>
+        <div class="filter-sep"></div>
+        <div class="active-filters" id="active-filters-a"></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="card">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'tab-rules')">📋 By Rule <span class="tab-count">8</span></div>
+          <div class="tab" onclick="switchTab(this,'tab-assignee')">👤 By Assignee <span class="tab-count">5</span></div>
+          <div class="tab" onclick="switchTab(this,'tab-org')">🏢 By Organization <span class="tab-count">12</span></div>
+        </div>
+
+        <!-- Tab: By Rule -->
+        <div id="tab-rules" class="tab-content active">
+          <div class="rules-table-wrap">
+            <table class="rules">
+              <thead>
+                <tr>
+                  <th style="width:32px"><input type="checkbox" style="accent-color:var(--brand)"/></th>
+                  <th style="min-width:200px">Rule Name</th>
+                  <th style="min-width:100px">Standard</th>
+                  <th style="min-width:80px">Status</th>
+                  <th style="min-width:260px">Assessment Attributes</th>
+                  <th style="min-width:160px">Org Attributes</th>
+                  <th style="min-width:80px">Sub-rules</th>
+                  <th style="min-width:150px">Assignees</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                  <td>
+                    <div class="rule-name">Remediation — Performance Elevation</div>
+                    <div class="rule-meta">Updated Apr 10, 2026</div>
+                    <button class="expand-btn" onclick="toggleExpand(this)">▾ Show assessment attributes</button>
+                    <div class="attr-expand">
+                      <div class="attr-row"><span class="attr-key">Workflow</span><div class="attr-vals"><span class="mini-tag mt-blue">Audit Workflow</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Rating Label</span><div class="attr-vals"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Scheme</span><div class="attr-vals"><span class="mini-tag mt-gray">SMETA 2P</span><span class="mini-tag mt-gray">SA8000</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Custom Fields</span><div class="attr-vals"><span class="mini-tag mt-purple">Escalation = Yes</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Assessment Rating</span><div class="attr-vals"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-orange">Probation</span><span class="mini-tag mt-red">Immediate Resolution</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Trigger Events</span><div class="attr-vals"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></div>
+                    </div>
+                  </td>
+                  <td><span class="mini-tag mt-teal">Perf. Elevation</span></td>
+                  <td><span class="badge badge-active">● Active</span></td>
+                  <td>
+                    <div class="multi-tags">
+                      <span class="mini-tag mt-blue">Audit Workflow</span>
+                      <span class="mini-tag mt-orange">Approval</span>
+                      <span class="mini-tag mt-red">Needs Improvement</span>
+                      <span class="mini-tag mt-orange">Probation</span>
+                    </div>
+                  </td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">VN</span><span class="mini-tag mt-gray">CN</span><span class="mini-tag mt-gray">BD</span><span class="mini-tag mt-gray">Tier 1</span></div></td>
+                  <td><span class="mini-tag mt-blue">3 sub-rules</span></td>
+                  <td>
+                    <div style="display:flex;gap:-4px">
+                      <div class="avatar avatar-sm" style="background:#1a56db;margin-right:4px">MT</div>
+                      <div class="avatar avatar-sm" style="background:#7c3aed;margin-right:4px">SK</div>
+                      <div class="avatar avatar-sm" style="background:#0e9f6e">AL</div>
+                    </div>
+                  </td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button><button class="icon-btn">🗑</button></div></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                  <td>
+                    <div class="rule-name">Approval Routing — Centric Brands</div>
+                    <div class="rule-meta">Updated Mar 22, 2026</div>
+                    <button class="expand-btn" onclick="toggleExpand(this)">▾ Show assessment attributes</button>
+                    <div class="attr-expand">
+                      <div class="attr-row"><span class="attr-key">Workflow</span><div class="attr-vals"><span class="mini-tag mt-gray">SVP/EVP Approval</span><span class="mini-tag mt-gray">Global Compliance Approval</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Rating Label</span><div class="attr-vals"><span class="mini-tag mt-orange">Approval</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Scheme</span><div class="attr-vals"><span class="mini-tag mt-gray">—</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Custom Fields</span><div class="attr-vals"><span class="mini-tag mt-gray">—</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Assessment Rating</span><div class="attr-vals"><span class="mini-tag mt-gray">All ratings</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Trigger Events</span><div class="attr-vals"><span class="mini-tag mt-blue">Asm Submitted</span></div></div>
+                    </div>
+                  </td>
+                  <td><span class="mini-tag mt-purple">APPROVAL</span></td>
+                  <td><span class="badge badge-active">● Active</span></td>
+                  <td>
+                    <div class="multi-tags">
+                      <span class="mini-tag mt-gray">SVP/EVP Approval</span>
+                      <span class="mini-tag mt-orange">Approval label</span>
+                      <span class="mini-tag mt-gray">All ratings</span>
+                    </div>
+                  </td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">All orgs</span></div></td>
+                  <td><span class="mini-tag mt-blue">2 sub-rules</span></td>
+                  <td><div style="display:flex;gap:4px"><div class="avatar avatar-sm" style="background:#c27803">KH</div><div class="avatar avatar-sm" style="background:#e02424">LL</div></div></td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button><button class="icon-btn">🗑</button></div></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                  <td>
+                    <div class="rule-name">RSSC Team — Scheme Routing</div>
+                    <div class="rule-meta">Updated Apr 2, 2026</div>
+                    <button class="expand-btn" onclick="toggleExpand(this)">▾ Show assessment attributes</button>
+                    <div class="attr-expand">
+                      <div class="attr-row"><span class="attr-key">Workflow</span><div class="attr-vals"><span class="mini-tag mt-blue">Social Compliance</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Rating Label</span><div class="attr-vals"><span class="mini-tag mt-blue">Compliance</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Scheme</span><div class="attr-vals"><span class="mini-tag mt-gray">SMETA 2P</span><span class="mini-tag mt-gray">SMETA 4P</span><span class="mini-tag mt-gray">BSCI</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Custom Fields</span><div class="attr-vals"><span class="mini-tag mt-gray">—</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Assessment Rating</span><div class="attr-vals"><span class="mini-tag mt-red">Needs Improvement</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Trigger Events</span><div class="attr-vals"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-teal">Asm Completed</span></div></div>
+                    </div>
+                  </td>
+                  <td><span class="mini-tag mt-teal">Social Audit</span></td>
+                  <td><span class="badge badge-active">● Active</span></td>
+                  <td>
+                    <div class="multi-tags">
+                      <span class="mini-tag mt-blue">Social Compliance</span>
+                      <span class="mini-tag mt-gray">SMETA / BSCI</span>
+                      <span class="mini-tag mt-red">Needs Improvement</span>
+                    </div>
+                  </td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">KH</span><span class="mini-tag mt-gray">No Tier</span></div></td>
+                  <td><span class="mini-tag mt-blue">1 sub-rule</span></td>
+                  <td><div style="display:flex;gap:4px"><div class="avatar avatar-sm" style="background:#0e9f6e">SK</div></div></td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button><button class="icon-btn">🗑</button></div></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                  <td>
+                    <div class="rule-name">India QA — Priority High</div>
+                    <div class="rule-meta">Updated Apr 5, 2026</div>
+                    <button class="expand-btn" onclick="toggleExpand(this)">▾ Show assessment attributes</button>
+                    <div class="attr-expand">
+                      <div class="attr-row"><span class="attr-key">Workflow</span><div class="attr-vals"><span class="mini-tag mt-blue">Audit Workflow</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Rating Label</span><div class="attr-vals"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Scheme</span><div class="attr-vals"><span class="mini-tag mt-gray">SA8000</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Custom Fields</span><div class="attr-vals"><span class="mini-tag mt-purple">Priority = High</span><span class="mini-tag mt-gray">Region = South Asia</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Assessment Rating</span><div class="attr-vals"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-red">Immediate Resolution</span></div></div>
+                      <div class="attr-row"><span class="attr-key">Trigger Events</span><div class="attr-vals"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></div>
+                    </div>
+                  </td>
+                  <td><span class="mini-tag mt-teal">Perf. Elevation</span></td>
+                  <td><span class="badge badge-active">● Active</span></td>
+                  <td>
+                    <div class="multi-tags">
+                      <span class="mini-tag mt-blue">Audit Workflow</span>
+                      <span class="mini-tag mt-gray">SA8000</span>
+                      <span class="mini-tag mt-purple">Priority = High</span>
+                    </div>
+                  </td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">IN</span><span class="mini-tag mt-gray">Tier 1</span></div></td>
+                  <td><span class="mini-tag mt-blue">1 sub-rule</span></td>
+                  <td><div style="display:flex;gap:4px"><div class="avatar avatar-sm" style="background:#e11d48">MR</div></div></td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button><button class="icon-btn">🗑</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab: By Assignee -->
+        <div id="tab-assignee" class="tab-content">
+          <div style="padding:16px">
+            <!-- Assignee 1 -->
+            <div class="assignee-card open">
+              <div class="assignee-header" onclick="this.closest('.assignee-card').classList.toggle('open')">
+                <div class="avatar" style="background:#1a56db;width:36px;height:36px;font-size:13px">MT</div>
+                <div class="assignee-info">
+                  <div class="assignee-name-main">Minh Tran</div>
+                  <div class="assignee-sub">QA Lead, APAC · minh.tran@inspectorio.com</div>
+                </div>
+                <div class="assignee-stats">
+                  <div class="astat"><div class="astat-num">2</div><div class="astat-label">Rules</div></div>
+                  <div class="astat"><div class="astat-num">18</div><div class="astat-label">Orgs</div></div>
+                  <div class="astat"><div class="astat-num">94</div><div class="astat-label">Asms</div></div>
+                </div>
+                <span class="chevron">▾</span>
+              </div>
+              <div class="assignee-body">
+                <div class="attr-section-title">📋 Assessment Attributes this person handles</div>
+                <div class="assess-attr-pills">
+                  <span class="mini-tag mt-blue">Audit Workflow</span>
+                  <span class="mini-tag mt-gray">Social Compliance</span>
+                  <span class="mini-tag mt-orange">Approval label</span>
+                  <span class="mini-tag mt-blue">Compliance label</span>
+                  <span class="mini-tag mt-gray">SMETA 2P</span>
+                  <span class="mini-tag mt-gray">SA8000</span>
+                  <span class="mini-tag mt-red">Needs Improvement</span>
+                  <span class="mini-tag mt-orange">Probation</span>
+                  <span class="mini-tag mt-blue">Asm Submitted</span>
+                  <span class="mini-tag mt-green">CAPA Submitted</span>
+                </div>
+                <div class="attr-section-title" style="margin-top:14px">🏢 Organizations (VN · Tier 1)</div>
+                <div class="multi-tags">
+                  <span class="mini-tag mt-gray">Win Sheng Garment Co.</span>
+                  <span class="mini-tag mt-gray">Hanoi Textile Manufacturing</span>
+                  <span class="mini-tag mt-gray">+16 more</span>
+                </div>
+              </div>
+            </div>
+            <!-- Assignee 2 -->
+            <div class="assignee-card" style="margin-top:10px">
+              <div class="assignee-header" onclick="this.closest('.assignee-card').classList.toggle('open')">
+                <div class="avatar" style="background:#e11d48;width:36px;height:36px;font-size:13px">MR</div>
+                <div class="assignee-info">
+                  <div class="assignee-name-main">Meghna Rathore</div>
+                  <div class="assignee-sub">QA Lead, India · meghna.rathore@inspectorio.com</div>
+                </div>
+                <div class="assignee-stats">
+                  <div class="astat"><div class="astat-num">1</div><div class="astat-label">Rule</div></div>
+                  <div class="astat"><div class="astat-num">6</div><div class="astat-label">Orgs</div></div>
+                  <div class="astat"><div class="astat-num">31</div><div class="astat-label">Asms</div></div>
+                </div>
+                <span class="chevron">▾</span>
+              </div>
+              <div class="assignee-body">
+                <div class="attr-section-title">📋 Assessment Attributes this person handles</div>
+                <div class="assess-attr-pills">
+                  <span class="mini-tag mt-blue">Audit Workflow</span>
+                  <span class="mini-tag mt-orange">Approval label</span>
+                  <span class="mini-tag mt-blue">Compliance label</span>
+                  <span class="mini-tag mt-gray">SA8000</span>
+                  <span class="mini-tag mt-purple">Priority = High</span>
+                  <span class="mini-tag mt-red">Needs Improvement</span>
+                  <span class="mini-tag mt-red">Immediate Resolution</span>
+                  <span class="mini-tag mt-blue">Asm Submitted</span>
+                  <span class="mini-tag mt-green">CAPA Submitted</span>
+                </div>
+                <div class="attr-section-title" style="margin-top:14px">🏢 Organizations (IN · Tier 1)</div>
+                <div class="multi-tags"><span class="mini-tag mt-gray">Mumbai Fabrics Ltd.</span><span class="mini-tag mt-gray">+5 more</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: By Organization -->
+        <div id="tab-org" class="tab-content">
+          <div style="overflow-x:auto">
+            <table class="rules" style="min-width:800px">
+              <thead>
+                <tr>
+                  <th>Organization</th>
+                  <th>Matched Rule</th>
+                  <th>Assessment Attributes</th>
+                  <th>Org Attributes</th>
+                  <th>Assignee</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="rule-name">Win Sheng Garment Co.</div><div class="rule-meta">🇻🇳 Vietnam · #405999</div></td>
+                  <td><span class="mini-tag mt-teal">Remediation Rule</span></td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-blue">Audit Workflow</span><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-gray">SMETA 2P</span><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-orange">Probation</span></div></td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">Tier 1</span><span class="mini-tag mt-gray">VN</span><span class="mini-tag mt-green">Active</span></div></td>
+                  <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar avatar-sm" style="background:#1a56db">MT</div> Minh Tran</div></td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">👁</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="rule-name">Dhaka Garments Ltd.</div><div class="rule-meta">🇧🇩 Bangladesh · #33210987</div></td>
+                  <td><span class="mini-tag mt-teal">Remediation Rule</span></td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-blue">Audit Workflow</span><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-gray">WRAP</span><span class="mini-tag mt-red">Immediate Resolution</span></div></td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">Tier 1</span><span class="mini-tag mt-gray">BD</span><span class="mini-tag mt-orange">Under Review</span></div></td>
+                  <td><div style="color:var(--danger);font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:5px">⚠️ Unassigned <button class="btn btn-ghost btn-sm" style="font-size:11.5px;padding:2px 7px">Assign</button></div></td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">👁</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="rule-name">Mumbai Fabrics Ltd.</div><div class="rule-meta">🇮🇳 India · #51209834</div></td>
+                  <td><span class="mini-tag mt-teal">India QA Rule</span></td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-blue">Audit Workflow</span><span class="mini-tag mt-gray">SA8000</span><span class="mini-tag mt-purple">Priority = High</span><span class="mini-tag mt-red">Needs Improvement</span></div></td>
+                  <td><div class="multi-tags"><span class="mini-tag mt-gray">Tier 1</span><span class="mini-tag mt-gray">IN</span><span class="mini-tag mt-green">Active</span></div></td>
+                  <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar avatar-sm" style="background:#e11d48">MR</div> Meghna Rathore</div></td>
+                  <td><div class="row-actions-hover"><button class="icon-btn">👁</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         OPTION E — DUAL VIEW TOGGLE
+    ══════════════════════════════════════════ -->
+    <div id="optE">
+      <div class="page-header">
+        <div>
+          <h1>Auto-Assignment Rules</h1>
+          <p>Manage all rules that automatically assign team members to assessments and CAPAs.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="switchView(this,'view-org')" id="vbtn-org">🏢 By Organization</button>
+            <button class="view-btn" onclick="switchView(this,'view-assignee')" id="vbtn-assignee">👤 By Assignee</button>
+          </div>
+          <button class="btn btn-primary">+ New Rule</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">Active Rules</div></div>
+        <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Assignees</div></div>
+        <div class="stat-card warn"><div class="stat-num">3</div><div class="stat-label">Unassigned</div></div>
+        <div class="stat-card"><div class="stat-num">94%</div><div class="stat-label">Coverage</div></div>
+      </div>
+
+      <!-- Shared filter bar with Assessment Attribute filters -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" placeholder="Search org, assignee, rule…" /></div>
+        <div class="filter-sep"></div>
+        <span style="font-size:11.5px;font-weight:600;color:var(--brand)">📋 Assessment</span>
+        <select class="filter-select" onchange="addFilterChipE('Workflow', this)">
+          <option value="">Workflow: All</option>
+          <option>Audit Workflow</option>
+          <option>Social Compliance</option>
+          <option>Approval Workflow</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChipE('Rating Label', this)">
+          <option value="">Rating Label: All</option>
+          <option>Approval</option>
+          <option>Compliance</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChipE('Scheme', this)">
+          <option value="">Scheme: All</option>
+          <option>SMETA 2P</option><option>SMETA 4P</option><option>BSCI</option><option>SA8000</option><option>WRAP</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChipE('Rating', this)">
+          <option value="">Rating: All</option>
+          <option>Needs Improvement</option>
+          <option>Probation</option>
+          <option>Immediate Resolution</option>
+        </select>
+        <div class="filter-sep"></div>
+        <span style="font-size:11.5px;font-weight:600;color:var(--success)">🏢 Org</span>
+        <select class="filter-select" onchange="addFilterChipE('Country', this)">
+          <option value="">Country: All</option>
+          <option>Vietnam</option><option>China</option><option>Bangladesh</option><option>India</option>
+        </select>
+        <select class="filter-select" onchange="addFilterChipE('Tier', this)">
+          <option value="">Tier: All</option>
+          <option>Tier 1</option><option>Tier 2</option><option>No Tier</option>
+        </select>
+        <div class="filter-sep"></div>
+        <div class="active-filters" id="active-filters-e"></div>
+        <button class="btn btn-ghost btn-sm" onclick="clearAllFilters('active-filters-e')" style="color:var(--gray-400);font-size:12px">Clear all</button>
+      </div>
+
+      <!-- By Organization view -->
+      <div id="view-org" class="card">
+        <div class="card-header">
+          <div class="card-title">🏢 By Organization <span style="font-weight:400;font-size:13px;color:var(--gray-400);margin-left:6px">— Which rule &amp; assignee covers each factory?</span></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm">⬇ Export</button>
+            <button class="btn btn-secondary btn-sm">⚙ Columns</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="org-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width:32px;vertical-align:middle"><input type="checkbox" style="accent-color:var(--brand)"/></th>
+                <th rowspan="2" style="vertical-align:middle;min-width:180px">Organization</th>
+                <th colspan="6" class="group-header gh-assess">📋 Assessment Attributes</th>
+                <th colspan="4" class="group-header gh-org">🏢 Org Attributes</th>
+                <th colspan="2" class="group-header gh-assign">👤 Assignment</th>
+                <th rowspan="2" style="vertical-align:middle"></th>
+              </tr>
+              <tr>
+                <th style="min-width:130px">Workflow</th>
+                <th style="min-width:120px">Rating Label</th>
+                <th style="min-width:100px">Scheme</th>
+                <th style="min-width:140px">Custom Fields</th>
+                <th style="min-width:160px">Assessment Rating</th>
+                <th style="min-width:160px">Trigger Events</th>
+                <th style="min-width:100px">Country</th>
+                <th style="min-width:80px">Tier</th>
+                <th style="min-width:120px">BP</th>
+                <th style="min-width:100px">Site Status</th>
+                <th style="min-width:160px">Assignee</th>
+                <th style="min-width:120px">Matched Rule</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                <td><div class="rule-name">Win Sheng Garment Co.</div><div class="rule-meta">#405999</div></td>
+                <td><span class="mini-tag mt-blue">Audit Workflow</span></td>
+                <td><span class="mini-tag mt-orange">Approval</span></td>
+                <td><span class="mini-tag mt-gray">SMETA 2P</span></td>
+                <td><span class="mini-tag mt-purple">Escalation = Yes</span></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-orange">Probation</span></div></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></td>
+                <td><span class="flag">🇻🇳</span> Vietnam</td>
+                <td><span class="mini-tag mt-blue">Tier 1</span></td>
+                <td><span class="mini-tag mt-purple">Target APAC</span></td>
+                <td><span class="mini-tag mt-green">Active</span></td>
+                <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar avatar-sm" style="background:#1a56db">MT</div><span>Minh Tran</span></div></td>
+                <td><span class="mini-tag mt-teal" style="cursor:pointer" onclick="openDetail()">Remediation Rule</span></td>
+                <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                <td><div class="rule-name">Ningbo Brother Apparel</div><div class="rule-meta">#16794883</div></td>
+                <td><span class="mini-tag mt-blue">Audit Workflow</span></td>
+                <td><span class="mini-tag mt-orange">Approval</span></td>
+                <td><span class="mini-tag mt-gray">BSCI</span></td>
+                <td><span class="mini-tag mt-gray">—</span></td>
+                <td><span class="mini-tag mt-red">Immediate Resolution</span></td>
+                <td><span class="mini-tag mt-blue">Asm Submitted</span></td>
+                <td><span class="flag">🇨🇳</span> China</td>
+                <td><span class="mini-tag mt-blue">Tier 1</span></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-purple">Target CN</span><span class="mini-tag mt-purple">Target APAC</span></div></td>
+                <td><span class="mini-tag mt-green">Active</span></td>
+                <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar avatar-sm" style="background:#7c3aed">SK</div><span>Sothavy Keo</span></div></td>
+                <td><span class="mini-tag mt-teal" style="cursor:pointer" onclick="openDetail()">Remediation Rule</span></td>
+                <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button></div></td>
+              </tr>
+              <tr style="background:#fff8f8">
+                <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                <td><div class="rule-name">Dhaka Garments Ltd.</div><div class="rule-meta">#33210987</div></td>
+                <td><span class="mini-tag mt-blue">Audit Workflow</span></td>
+                <td><span class="mini-tag mt-orange">Approval</span></td>
+                <td><span class="mini-tag mt-gray">WRAP</span></td>
+                <td><span class="mini-tag mt-purple">Escalation = Yes</span></td>
+                <td><span class="mini-tag mt-red">Immediate Resolution</span></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></td>
+                <td><span class="flag">🇧🇩</span> Bangladesh</td>
+                <td><span class="mini-tag mt-blue">Tier 1</span></td>
+                <td><span class="mini-tag mt-purple">Target BD</span></td>
+                <td><span class="mini-tag mt-orange">Under Review</span></td>
+                <td><div style="color:var(--danger);font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:5px">⚠️ Unassigned <button class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 7px">Assign</button></div></td>
+                <td><span class="mini-tag mt-teal">Remediation Rule</span></td>
+                <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                <td><div class="rule-name">Mumbai Fabrics Ltd.</div><div class="rule-meta">#51209834</div></td>
+                <td><span class="mini-tag mt-blue">Audit Workflow</span></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></td>
+                <td><span class="mini-tag mt-gray">SA8000</span></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-purple">Priority = High</span><span class="mini-tag mt-gray">Region = South Asia</span></div></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-red">Immediate Resolution</span></div></td>
+                <td><div class="multi-tags"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></td>
+                <td><span class="flag">🇮🇳</span> India</td>
+                <td><span class="mini-tag mt-blue">Tier 1</span></td>
+                <td><span class="mini-tag mt-purple">Target IN</span></td>
+                <td><span class="mini-tag mt-green">Active</span></td>
+                <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar avatar-sm" style="background:#e11d48">MR</div><span>Meghna Rathore</span></div></td>
+                <td><span class="mini-tag mt-teal" style="cursor:pointer" onclick="openDetail()">India QA Rule</span></td>
+                <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--brand)"/></td>
+                <td><div class="rule-name">Phnom Penh Apparel</div><div class="rule-meta">#40021378</div></td>
+                <td><span class="mini-tag mt-gray">Social Compliance</span></td>
+                <td><span class="mini-tag mt-blue">Compliance</span></td>
+                <td><span class="mini-tag mt-gray">SMETA 2P</span></td>
+                <td><span class="mini-tag mt-gray">—</span></td>
+                <td><span class="mini-tag mt-red">Needs Improvement</span></td>
+                <td><span class="mini-tag mt-blue">Asm Submitted</span></td>
+                <td><span class="flag">🇰🇭</span> Cambodia</td>
+                <td><span class="mini-tag mt-gray" style="background:#f0fdf4;color:#166534">No Tier</span></td>
+                <td><span class="mini-tag mt-purple">Vendor KH-1</span></td>
+                <td><span class="mini-tag mt-green">Active</span></td>
+                <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar avatar-sm" style="background:#0e9f6e">SK</div><span>Sothavy Keo</span></div></td>
+                <td><span class="mini-tag mt-teal" style="cursor:pointer" onclick="openDetail()">RSSC Rule</span></td>
+                <td><div class="row-actions-hover"><button class="icon-btn">✏️</button><button class="icon-btn">👁</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:10px 16px;background:var(--gray-50);border-top:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--gray-500)">
+          <span>Showing 5 of 12 organizations</span>
+          <div style="display:flex;gap:4px">
+            <button style="width:26px;height:26px;border-radius:4px;border:1px solid var(--gray-200);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--brand)">1</button>
+            <button style="width:26px;height:26px;border-radius:4px;border:1px solid var(--gray-200);background:#fff;cursor:pointer;font-size:12px;color:var(--gray-500)">2</button>
+            <button style="width:26px;height:26px;border-radius:4px;border:1px solid var(--gray-200);background:#fff;cursor:pointer;font-size:12px;color:var(--gray-500)">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- By Assignee view -->
+      <div id="view-assignee" style="display:none">
+        <div class="assignee-view">
+          <div class="av-card">
+            <div class="av-header">
+              <div class="avatar" style="background:#1a56db;width:38px;height:38px;font-size:14px">MT</div>
+              <div class="av-person">
+                <div class="av-name">Minh Tran</div>
+                <div class="av-role">QA Lead, APAC · minh.tran@inspectorio.com</div>
+              </div>
+              <div class="av-coverage">
+                <div class="av-stat"><div class="av-stat-num">2</div><div class="av-stat-label">Rules</div></div>
+                <div class="av-stat"><div class="av-stat-num">18</div><div class="av-stat-label">Orgs</div></div>
+                <div class="av-stat"><div class="av-stat-num">94</div><div class="av-stat-label">Asms/mo</div></div>
+              </div>
+            </div>
+            <div class="av-attr-summary">
+              <div class="av-attr-row"><span class="av-attr-label">Workflows</span><div class="multi-tags"><span class="mini-tag mt-blue">Audit Workflow</span><span class="mini-tag mt-gray">Social Compliance</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Rating Labels</span><div class="multi-tags"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Schemes</span><div class="multi-tags"><span class="mini-tag mt-gray">SMETA 2P</span><span class="mini-tag mt-gray">SA8000</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Ratings</span><div class="multi-tags"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-orange">Probation</span><span class="mini-tag mt-red">Immediate Resolution</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Trigger Events</span><div class="multi-tags"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></div>
+            </div>
+            <div class="av-table-wrap">
+              <table class="av-table">
+                <thead><tr><th>Organization</th><th>Country</th><th>Tier</th><th>Workflow</th><th>Rating Label</th><th>Assessment Rating</th><th>Rule</th></tr></thead>
+                <tbody>
+                  <tr><td>Win Sheng Garment Co.</td><td>🇻🇳 Vietnam</td><td><span class="mini-tag mt-blue">Tier 1</span></td><td><span class="mini-tag mt-blue">Audit Workflow</span></td><td><span class="mini-tag mt-orange">Approval</span></td><td><div class="multi-tags"><span class="mini-tag mt-red">NI</span><span class="mini-tag mt-orange">Prob</span></div></td><td><span class="mini-tag mt-teal">Remediation</span></td></tr>
+                  <tr><td>Hanoi Textile Manufacturing</td><td>🇻🇳 Vietnam</td><td><span class="mini-tag mt-blue">Tier 1</span></td><td><span class="mini-tag mt-blue">Audit Workflow</span></td><td><div class="multi-tags"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></td><td><div class="multi-tags"><span class="mini-tag mt-red">NI</span><span class="mini-tag mt-orange">Prob</span><span class="mini-tag mt-red">IR</span></div></td><td><span class="mini-tag mt-teal">Remediation</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="av-card">
+            <div class="av-header">
+              <div class="avatar" style="background:#e11d48;width:38px;height:38px;font-size:14px">MR</div>
+              <div class="av-person"><div class="av-name">Meghna Rathore</div><div class="av-role">QA Lead, India · meghna.rathore@inspectorio.com</div></div>
+              <div class="av-coverage">
+                <div class="av-stat"><div class="av-stat-num">1</div><div class="av-stat-label">Rule</div></div>
+                <div class="av-stat"><div class="av-stat-num">6</div><div class="av-stat-label">Orgs</div></div>
+                <div class="av-stat"><div class="av-stat-num">31</div><div class="av-stat-label">Asms/mo</div></div>
+              </div>
+            </div>
+            <div class="av-attr-summary">
+              <div class="av-attr-row"><span class="av-attr-label">Workflows</span><div class="multi-tags"><span class="mini-tag mt-blue">Audit Workflow</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Rating Labels</span><div class="multi-tags"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Schemes</span><div class="multi-tags"><span class="mini-tag mt-gray">SA8000</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Custom Fields</span><div class="multi-tags"><span class="mini-tag mt-purple">Priority = High</span><span class="mini-tag mt-gray">Region = South Asia</span></div></div>
+              <div class="av-attr-row"><span class="av-attr-label">Ratings</span><div class="multi-tags"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-red">Immediate Resolution</span></div></div>
+            </div>
+            <div class="av-table-wrap">
+              <table class="av-table">
+                <thead><tr><th>Organization</th><th>Country</th><th>Tier</th><th>Workflow</th><th>Scheme</th><th>Assessment Rating</th><th>Rule</th></tr></thead>
+                <tbody>
+                  <tr><td>Mumbai Fabrics Ltd.</td><td>🇮🇳 India</td><td><span class="mini-tag mt-blue">Tier 1</span></td><td><span class="mini-tag mt-blue">Audit Workflow</span></td><td><span class="mini-tag mt-gray">SA8000</span></td><td><div class="multi-tags"><span class="mini-tag mt-red">NI</span><span class="mini-tag mt-red">IR</span></div></td><td><span class="mini-tag mt-teal">India QA</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Detail panel / Rule drawer -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <div class="detail-title">Remediation Assignment — Performance Elevation</div>
+      <button class="icon-btn" onclick="closeDetailBtn()" style="font-size:18px">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section">
+        <div class="detail-section-title">General Info</div>
+        <div class="detail-row"><div class="detail-key">Status</div><div class="detail-val"><span class="badge badge-active">● Active</span></div></div>
+        <div class="detail-row"><div class="detail-key">Standard</div><div class="detail-val"><span class="mini-tag mt-teal">Performance Elevation</span></div></div>
+        <div class="detail-row"><div class="detail-key">Rule Type</div><div class="detail-val">Rule Set (3 sub-rules)</div></div>
+        <div class="detail-row"><div class="detail-key">Fallback User</div><div class="detail-val">Sarah Chen (QA Manager, Global)</div></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">📋 Assessment Attributes</div>
+        <div class="detail-row"><div class="detail-key">Workflow</div><div class="detail-val"><span class="mini-tag mt-blue">Audit Workflow</span></div></div>
+        <div class="detail-row"><div class="detail-key">Rating Label</div><div class="detail-val"><span class="mini-tag mt-orange">Approval</span><span class="mini-tag mt-blue">Compliance</span></div></div>
+        <div class="detail-row"><div class="detail-key">Scheme</div><div class="detail-val"><span class="mini-tag mt-gray">SMETA 2P</span><span class="mini-tag mt-gray">SA8000</span></div></div>
+        <div class="detail-row"><div class="detail-key">Custom Fields</div><div class="detail-val"><span class="mini-tag mt-purple">Escalation = Yes</span></div></div>
+        <div class="detail-row"><div class="detail-key">Assessment Rating</div><div class="detail-val"><span class="mini-tag mt-red">Needs Improvement</span><span class="mini-tag mt-orange">Probation</span><span class="mini-tag mt-red">Immediate Resolution</span></div></div>
+        <div class="detail-row"><div class="detail-key">Trigger Events</div><div class="detail-val"><span class="mini-tag mt-blue">Asm Submitted</span><span class="mini-tag mt-green">CAPA Submitted</span></div></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">🏢 Org Attributes (Sub-rule conditions)</div>
+        <div class="detail-row"><div class="detail-key">Sub-rule 1</div><div class="detail-val">Tier = Tier 1 → Org Mapping</div></div>
+        <div class="detail-row"><div class="detail-key">Sub-rule 2</div><div class="detail-val">Tier = Tier 2 → Direct Assign (David Park)</div></div>
+        <div class="detail-row"><div class="detail-key">Sub-rule 3</div><div class="detail-val">Tier not set → Attribute Map (Country → Lead)</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-primary btn-sm">✏️ Edit Rule</button>
+        <button class="btn btn-secondary btn-sm">📋 View Log</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Option switcher
+  function switchOption(opt, el) {
+    document.querySelectorAll('.opt-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('optA').classList.remove('active');
+    document.getElementById('optE').classList.remove('active');
+    document.getElementById('opt'+opt).classList.add('active');
+  }
+
+  // Tab switcher (Option A)
+  function switchTab(el, id) {
+    el.closest('.card').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    el.closest('.card').querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // View toggle (Option E)
+  function switchView(btn, viewId) {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-org').style.display = viewId === 'view-org' ? 'block' : 'none';
+    document.getElementById('view-assignee').style.display = viewId === 'view-assignee' ? '' : 'none';
+  }
+
+  // Expand row details
+  function toggleExpand(btn) {
+    const expand = btn.nextElementSibling;
+    const isOpen = expand.classList.toggle('open');
+    btn.textContent = (isOpen ? '▴' : '▾') + ' ' + (isOpen ? 'Hide' : 'Show') + ' assessment attributes';
+  }
+
+  // Filter chips
+  function addFilterChip(key, sel) {
+    if (!sel.value) return;
+    const container = document.getElementById('active-filters-a');
+    const existing = container.querySelector('[data-key="'+key+'"]');
+    if (existing) existing.remove();
+    const chip = document.createElement('div');
+    chip.className = 'active-filter-tag';
+    chip.dataset.key = key;
+    chip.innerHTML = `<strong>${key}:</strong> ${sel.value} <button onclick="this.closest('.active-filter-tag').remove()">×</button>`;
+    container.appendChild(chip);
+    sel.value = '';
+  }
+  function addFilterChipE(key, sel) {
+    if (!sel.value) return;
+    const container = document.getElementById('active-filters-e');
+    const existing = container.querySelector('[data-key="'+key+'"]');
+    if (existing) existing.remove();
+    const chip = document.createElement('div');
+    chip.className = 'active-filter-tag';
+    chip.dataset.key = key;
+    chip.innerHTML = `<strong>${key}:</strong> ${sel.value} <button onclick="this.closest('.active-filter-tag').remove()">×</button>`;
+    container.appendChild(chip);
+    sel.value = '';
+  }
+  function clearAllFilters(id) {
+    document.getElementById(id).innerHTML = '';
+  }
+
+  // Detail panel
+  function openDetail() {
+    document.getElementById('detail-overlay').classList.add('open');
+  }
+  function closeDetail(e) {
+    if (e.target === document.getElementById('detail-overlay')) closeDetailBtn();
+  }
+  function closeDetailBtn() {
+    document.getElementById('detail-overlay').classList.remove('open');
+  }
+</script>
+</body>
+</html>
