@@ -380,83 +380,218 @@ function Step2(){
 }
 
 /* ── Step 3: Review ────────────────────────────────── */
-function fmtCond(c){const a=ALL_ATTRS.find(x=>x.key===c.attributeKey);const m={equals:'equals',not_equals:'does not equal',contains:'contains'};return{label:a?a.label:c.attributeKey,op:m[c.operator]||c.operator,values:c.values}}
-function ABadge({a}){const g=a.type==='group';return <span className={`badge ${g?'b-w':'b-s'}`} style={{gap:4}}>{g&&<Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={12}/>}{a.name}</span>}
-function SH({icon,title}){return <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}><div style={{width:32,height:32,borderRadius:'var(--r-sm)',background:'var(--pri-l)',color:'var(--pri)',display:'flex',alignItems:'center',justifyContent:'center'}}>{icon}</div><h3 style={{fontSize:'1rem',fontWeight:600,color:'var(--g800)'}}>{title}</h3></div>}
+const BADGE_COLORS={
+  country:{bg:'#dbeafe',color:'#1e40af'},
+  tier:{bg:'#fef3c7',color:'#92400e'},
+  region:{bg:'#e0e7ff',color:'#4338ca'},
+  factoryStatus:{bg:'#d1fae5',color:'#065f46'},
+  businessPartner:{bg:'#fce7f3',color:'#9d174d'},
+  productCategory:{bg:'#ede9fe',color:'#5b21b6'},
+  scheme:{bg:'#dbeafe',color:'#1d4ed8'},
+  rating:{bg:'#fef2f2',color:'#dc2626'},
+  status:{bg:'#d1fae5',color:'#065f46'},
+  auditType:{bg:'#e0e7ff',color:'#4f46e5'},
+  standard:{bg:'#fef3c7',color:'#b45309'},
+};
+const RATING_COLORS={
+  'Acceptable':{bg:'#d1fae5',color:'#065f46'},
+  'Needs Improvement':{bg:'#fef3c7',color:'#92400e'},
+  'Probation':{bg:'#fed7aa',color:'#c2410c'},
+  'Immediate Resolution':{bg:'#fecaca',color:'#dc2626'},
+  'Not Rated':{bg:'#f3f4f6',color:'#6b7280'},
+};
+const STATUS_COLORS={
+  'Submitted':{bg:'#dbeafe',color:'#1d4ed8'},
+  'Completed':{bg:'#d1fae5',color:'#065f46'},
+  'Created':{bg:'#f3f4f6',color:'#6b7280'},
+  'In Progress':{bg:'#fef3c7',color:'#92400e'},
+  'Cancelled':{bg:'#fecaca',color:'#dc2626'},
+  'CAPA Submitted':{bg:'#ede9fe',color:'#7c3aed'},
+};
+
+function AttrBadge({attrKey,value}){
+  let c=BADGE_COLORS[attrKey]||{bg:'#f3f4f6',color:'#4b5563'};
+  if(attrKey==='rating'&&RATING_COLORS[value])c=RATING_COLORS[value];
+  if(attrKey==='status'&&STATUS_COLORS[value])c=STATUS_COLORS[value];
+  return <span style={{display:'inline-flex',alignItems:'center',padding:'3px 10px',borderRadius:9999,fontSize:'.75rem',fontWeight:500,background:c.bg,color:c.color,whiteSpace:'nowrap'}}>{value}</span>;
+}
+
+function buildAssigneeView(cr){
+  const vs=validSubs(cr);
+  const map={};
+
+  vs.forEach((sr,idx)=>{
+    const assignees=cr.assignments[sr.id]||[];
+    const orgConds=sr.conditions.filter(c=>c.attributeKey&&c.values.length>0&&ALL_ATTRS.find(a=>a.key===c.attributeKey)?.cat==='org');
+    const assConds=sr.conditions.filter(c=>c.attributeKey&&c.values.length>0&&ALL_ATTRS.find(a=>a.key===c.attributeKey)?.cat==='ass');
+
+    assignees.forEach(a=>{
+      if(!map[a.id])map[a.id]={...a,rules:[],orgAttrs:{},assAttrs:{}};
+      map[a.id].rules.push({idx:idx+1,name:sr.name,id:sr.id});
+      orgConds.forEach(c=>{
+        if(!map[a.id].orgAttrs[c.attributeKey])map[a.id].orgAttrs[c.attributeKey]=new Set();
+        c.values.forEach(v=>map[a.id].orgAttrs[c.attributeKey].add(v));
+      });
+      assConds.forEach(c=>{
+        if(!map[a.id].assAttrs[c.attributeKey])map[a.id].assAttrs[c.attributeKey]=new Set();
+        c.values.forEach(v=>map[a.id].assAttrs[c.attributeKey].add(v));
+      });
+    });
+  });
+
+  if(cr.fallbackAssignees.length>0){
+    cr.fallbackAssignees.forEach(a=>{
+      if(!map[a.id])map[a.id]={...a,rules:[],orgAttrs:{},assAttrs:{}};
+      map[a.id].rules.push({idx:'FB',name:'Fallback (ELSE)',id:'fallback'});
+    });
+  }
+
+  return Object.values(map);
+}
+
+function orgSummary(orgAttrs){
+  const parts=[];
+  if(orgAttrs.country)parts.push([...orgAttrs.country].join(', '));
+  if(orgAttrs.tier)parts.push([...orgAttrs.tier].join(', '));
+  return parts.join(' · ')||null;
+}
+
+const MOCK_ORG_NAMES={
+  'Vietnam':['Win Sheng Garment Co.','Hanoi Textile Manufacturing','Saigon Apparel Ltd.','Binh Duong Fabrics','Mekong Quality Corp.'],
+  'China':['Ningbo Brother Apparel','Shanghai Weaving Co.','Guangzhou Textile Inc.','Shenzhen Quality Mfg.'],
+  'Bangladesh':['Dhaka Garments Ltd.','Chittagong Textile Co.','Rangpur Apparel Group'],
+  'India':['Mumbai Fabrics Ltd.','Delhi Cotton Works','Bangalore Textiles Inc.'],
+  'Cambodia':['Phnom Penh Apparel Co.','Siem Reap Garments Ltd.'],
+  'Indonesia':['Jakarta Textile Corp.','Surabaya Manufacturing Co.'],
+};
 
 function Step3(){
   const{state}=useR();
   const cr=state.currentRule;
   const trigger=TRIGGERS.find(t=>t.key===cr.triggerEvent);
   const vs=validSubs(cr);
-  const hasA=vs.some(sr=>(cr.assignments[sr.id]||[]).length>0);
-  const hasF=cr.fallbackAssignees.length>0;
+  const assigneeRows=buildAssigneeView(cr);
+  const hasA=assigneeRows.length>0;
+
+  const triggerLabel=trigger?trigger.label:'';
+  const triggerBadges=[];
+  if(triggerLabel.includes('Submitted'))triggerBadges.push({key:'status',val:'Asm Submitted'});
+  if(cr.triggerEvent==='capa_submitted')triggerBadges.push({key:'status',val:'CAPA Submitted'});
+
   return(
     <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:20}}>
-      {!hasA&&!hasF&&<div style={{background:'var(--red-l)',border:'1px solid #fecaca',borderRadius:'var(--r-md)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10}}>
+      {!hasA&&<div style={{background:'var(--red-l)',border:'1px solid #fecaca',borderRadius:'var(--r-md)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10}}>
         <Icon d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" s="var(--red)"/>
         <span style={{fontSize:'.875rem',color:'#991b1b'}}>No assignees configured. Go back to Step 2 to assign users or groups.</span>
       </div>}
 
-      <div className="card" style={{padding:24}}>
-        <SH icon={<Icon d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>} title="General Information"/>
-        <div style={{display:'grid',gridTemplateColumns:'140px 1fr',gap:'10px 20px',fontSize:'.875rem'}}>
+      <div className="card" style={{padding:'20px 24px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'140px 1fr',gap:'8px 20px',fontSize:'.875rem'}}>
           <span style={{color:'var(--g500)',fontWeight:500}}>Rule Name</span>
-          <span style={{fontWeight:500}}>{cr.name||'(not set)'}</span>
+          <span style={{fontWeight:600}}>{cr.name||'(not set)'}</span>
           <span style={{color:'var(--g500)',fontWeight:500}}>Trigger Event</span>
           <span>{trigger?<span className="badge b-p">{trigger.label}</span>:'(not set)'}</span>
           {cr.description&&<><span style={{color:'var(--g500)',fontWeight:500}}>Description</span><span style={{color:'var(--g600)'}}>{cr.description}</span></>}
+          <span style={{color:'var(--g500)',fontWeight:500}}>Sub-Rules</span>
+          <span>{vs.length} sub-rule{vs.length!==1?'s':''} with <span style={{fontWeight:500}}>{assigneeRows.length}</span> unique assignee{assigneeRows.length!==1?'s':''}</span>
         </div>
       </div>
 
-      <div className="card" style={{padding:24}}>
-        <SH icon={<Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>} title="Rules & Assignments"/>
-        {vs.length===0?<div style={{padding:24,textAlign:'center',color:'var(--g400)',background:'var(--g50)',borderRadius:'var(--r-md)'}}>No sub-rules with conditions defined.</div>:
-        <div style={{display:'flex',flexDirection:'column',gap:16}}>
-          {vs.map((sr,i)=>{
-            const assignees=cr.assignments[sr.id]||[];
-            const conds=sr.conditions.filter(c=>c.attributeKey&&c.values.length>0);
-            return <div key={sr.id} className="slide-in" style={{border:'1px solid var(--g200)',borderRadius:'var(--r-md)',overflow:'hidden',animationDelay:`${i*80}ms`}}>
-              <div style={{background:'var(--g50)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid var(--g200)'}}>
-                <div style={{display:'flex',alignItems:'center',gap:8}}>
-                  <span className="badge b-p" style={{fontWeight:600}}>Sub-rule {i+1}</span>
-                  {sr.name&&<span style={{fontWeight:500,fontSize:'.875rem'}}>{sr.name}</span>}
-                  {i>0&&<span className="badge b-g" style={{fontSize:'.625rem',fontWeight:700,marginLeft:4}}>OR</span>}
-                </div>
-                {assignees.length>0?<span className="badge b-s" style={{fontSize:'.75rem'}}>{assignees.length} assignee{assignees.length>1?'s':''}</span>:
-                <span className="badge b-d" style={{fontSize:'.75rem'}}>No assignees</span>}
-              </div>
-              <div style={{padding:'14px 16px'}}>
-                <div style={{marginBottom:12}}>
-                  <span style={{fontSize:'.75rem',fontWeight:600,color:'var(--g500)',textTransform:'uppercase',letterSpacing:'.05em'}}>When</span>
-                  <div style={{marginTop:6,display:'flex',flexDirection:'column',gap:6}}>
-                    {conds.map((c,j)=>{const f=fmtCond(c);return <div key={c.id} style={{display:'flex',alignItems:'center',gap:8}}>
-                      {j>0&&<span className="badge b-w" style={{fontSize:'.625rem',fontWeight:700}}>AND</span>}
-                      <span style={{fontSize:'.8125rem'}}><strong>{f.label}</strong> <span style={{color:'var(--g500)'}}>{f.op}</span> {f.values.map((v,k)=><Fragment key={k}>{k>0&&<span style={{color:'var(--g400)'}}>, </span>}<span className="badge b-g" style={{fontSize:'.75rem'}}>{v}</span></Fragment>)}</span>
-                    </div>})}
-                  </div>
-                </div>
-                <div>
-                  <span style={{fontSize:'.75rem',fontWeight:600,color:'var(--g500)',textTransform:'uppercase',letterSpacing:'.05em'}}>Then assign to</span>
-                  <div style={{marginTop:6,display:'flex',flexWrap:'wrap',gap:6}}>
-                    {assignees.length>0?assignees.map(a=><ABadge key={a.id} a={a}/>):<span style={{fontSize:'.8125rem',color:'var(--g400)',fontStyle:'italic'}}>No assignees selected</span>}
-                  </div>
-                </div>
-              </div>
-            </div>
-          })}
-        </div>}
-      </div>
-
-      <div className="card" style={{padding:24,borderLeft:`4px solid ${hasF?'var(--grn)':'var(--warn)'}`}}>
-        <SH icon={<Icon d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>} title="Fallback (ELSE) Assignment"/>
-        <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-          {hasF?cr.fallbackAssignees.map(a=><ABadge key={a.id} a={a}/>):<span style={{fontSize:'.8125rem',color:'var(--g400)',fontStyle:'italic'}}>No fallback assignees — assessments may be left unassigned if no sub-rule matches.</span>}
+      <div className="card" style={{padding:0,overflow:'hidden'}}>
+        <div style={{padding:'16px 24px',borderBottom:'1px solid var(--g200)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={18} s="var(--g500)"/>
+            <h3 style={{fontSize:'1rem',fontWeight:600,color:'var(--g800)'}}>Assignment Preview</h3>
+          </div>
+          <span style={{fontSize:'.8125rem',color:'var(--g400)'}}>{assigneeRows.length} assignee{assigneeRows.length!==1?'s':''}</span>
         </div>
+
+        {assigneeRows.length===0?
+          <div style={{padding:'48px 24px',textAlign:'center',color:'var(--g400)'}}>
+            <Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={40} s="var(--g300)" sw={1.5}/>
+            <p style={{fontWeight:500,marginTop:12}}>No assignees to preview</p>
+            <p style={{fontSize:'.8125rem',marginTop:4}}>Go back to Step 2 to assign users or groups.</p>
+          </div>
+        :
+          <div>
+            {assigneeRows.map((row,ri)=>{
+              const isGroup=row.type==='group';
+              const initials=isGroup?null:row.name.split(' ').map(n=>n[0]).join('');
+              const avatarColors=['#4f46e5','#0891b2','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0d9488'];
+              const avatarBg=avatarColors[ri%avatarColors.length];
+
+              const orgKeys=Object.keys(row.orgAttrs);
+              const assKeys=Object.keys(row.assAttrs);
+
+              const countries=row.orgAttrs.country?[...row.orgAttrs.country]:[];
+              const mockOrgs=countries.flatMap(c=>(MOCK_ORG_NAMES[c]||[]).slice(0,Math.ceil(3/countries.length)));
+              const orgCount=Math.max(mockOrgs.length,Math.floor(Math.random()*15)+3);
+              const asmCount=Math.floor(Math.random()*80)+10;
+
+              return <div key={row.id} className="slide-in" style={{borderBottom:ri<assigneeRows.length-1?'1px solid var(--g200)':'none',animationDelay:`${ri*80}ms`}}>
+                <div style={{padding:'16px 24px',display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:14}}>
+                    <div style={{width:40,height:40,borderRadius:'50%',background:isGroup?'var(--warn-l)':avatarBg,color:isGroup?'#92400e':'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:isGroup?'.875rem':'.8125rem',fontWeight:700,flexShrink:0}}>
+                      {isGroup?<Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" w={18} s="#92400e"/>:initials}
+                    </div>
+                    <div>
+                      <div style={{fontWeight:600,fontSize:'.9375rem',color:'var(--g900)'}}>{row.name}</div>
+                      <div style={{fontSize:'.8125rem',color:'var(--g500)',display:'flex',alignItems:'center',gap:6}}>
+                        {isGroup?<span>{row.memberCount} members</span>:<span>{row.role||'Member'}</span>}
+                        {row.rules.some(r=>r.id==='fallback')&&<span className="badge b-w" style={{fontSize:'.625rem',fontWeight:600,padding:'1px 6px'}}>FALLBACK</span>}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{display:'flex',gap:20,textAlign:'center',flexShrink:0}}>
+                    <div>
+                      <div style={{fontSize:'1.125rem',fontWeight:700,color:'var(--g800)'}}>{row.rules.length}</div>
+                      <div style={{fontSize:'.6875rem',color:'var(--g400)'}}>Rule{row.rules.length!==1?'s':''}</div>
+                    </div>
+                    <div>
+                      <div style={{fontSize:'1.125rem',fontWeight:700,color:'var(--g800)'}}>{orgCount}</div>
+                      <div style={{fontSize:'.6875rem',color:'var(--g400)'}}>Orgs</div>
+                    </div>
+                    <div>
+                      <div style={{fontSize:'1.125rem',fontWeight:700,color:'var(--g800)'}}>{asmCount}</div>
+                      <div style={{fontSize:'.6875rem',color:'var(--g400)'}}>Asms</div>
+                    </div>
+                  </div>
+                </div>
+
+                {assKeys.length>0&&<div style={{padding:'0 24px 12px',paddingLeft:78}}>
+                  <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:8}}>
+                    <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" w={13} s="var(--g400)"/>
+                    <span style={{fontSize:'.6875rem',fontWeight:600,color:'var(--g400)',textTransform:'uppercase',letterSpacing:'.05em'}}>Assessment attributes this person handles</span>
+                  </div>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                    {triggerBadges.map(tb=><AttrBadge key={tb.val} attrKey={tb.key} value={tb.val}/>)}
+                    {assKeys.map(k=>[...row.assAttrs[k]].map(v=><AttrBadge key={k+v} attrKey={k} value={v}/>))}
+                  </div>
+                </div>}
+
+                {orgKeys.length>0&&<div style={{padding:'0 24px 16px',paddingLeft:78}}>
+                  <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:8}}>
+                    <Icon d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" w={13} s="var(--g400)"/>
+                    <span style={{fontSize:'.6875rem',fontWeight:600,color:'var(--g400)',textTransform:'uppercase',letterSpacing:'.05em'}}>Organizations ({orgSummary(row.orgAttrs)||'All'})</span>
+                  </div>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:6,alignItems:'center'}}>
+                    {mockOrgs.slice(0,2).map(o=><span key={o} style={{fontSize:'.8125rem',color:'var(--g700)'}}>{o}</span>)}
+                    {mockOrgs.slice(0,2).length>0&&mockOrgs.length>2&&<span style={{fontSize:'.8125rem',color:'var(--g700)'}}> </span>}
+                    {orgCount>2&&<span style={{fontSize:'.75rem',color:'var(--pri)',fontWeight:500,cursor:'pointer'}}>+{orgCount-2} more</span>}
+                  </div>
+                </div>}
+
+                {orgKeys.length===0&&assKeys.length===0&&<div style={{padding:'0 24px 16px',paddingLeft:78}}>
+                  <span style={{fontSize:'.8125rem',color:'var(--g400)',fontStyle:'italic'}}>Fallback assignee — handles all unmatched assessments</span>
+                </div>}
+              </div>;
+            })}
+          </div>
+        }
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
-        {[{n:vs.length,l:'Sub-Rules',c:'var(--pri)'},{n:new Set(vs.flatMap(sr=>(cr.assignments[sr.id]||[]).map(a=>a.id))).size,l:'Unique Assignees',c:'var(--grn)'},{n:vs.reduce((s,sr)=>s+sr.conditions.filter(c=>c.attributeKey&&c.values.length>0).length,0),l:'Total Conditions',c:'var(--warn)'}].map(x=>
+        {[{n:vs.length,l:'Sub-Rules',c:'var(--pri)'},{n:assigneeRows.length,l:'Unique Assignees',c:'var(--grn)'},{n:vs.reduce((s,sr)=>s+sr.conditions.filter(c=>c.attributeKey&&c.values.length>0).length,0),l:'Total Conditions',c:'var(--warn)'}].map(x=>
           <div key={x.l} className="card" style={{padding:'16px 20px',textAlign:'center'}}>
             <div style={{fontSize:'1.75rem',fontWeight:700,color:x.c}}>{x.n}</div>
             <div style={{fontSize:'.8125rem',color:'var(--g500)'}}>{x.l}</div>
